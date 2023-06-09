@@ -6,7 +6,7 @@
   "scripts": {
     "client-build": "cd client && yarn build",
     "install-client": "cd client && yarn install",
-    "postbuild": "yarn install && yarn install-client && yarn client-build",
+    "postbuild": "yarn install",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
