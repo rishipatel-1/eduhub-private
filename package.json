@@ -1,9 +1,9 @@
 {
   "main": "index.js",
   "scripts": {
-    "client-build": "cd client && npm run build",
-    "install-client": "cd client && npm run install",
-    "postbuild": "npm run install && npm run install-client && npm run client-build",
+    "client-build": "cd client && yarn build",
+    "install-client": "cd client && yarn install",
+    "postbuild": "yarn install && yarn install-client && yarn client-build",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
