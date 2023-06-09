@@ -1,0 +1,41 @@
+.graded-text {
+  margin-right: 5px;
+  color: green;
+}
+
+.grade-it-text {
+  margin-right: 5px;
+  color: green;
+}
+
+.grade-submitted-text {
+  color: green;
+}
+.gradeform {
+  position: relative;
+}
+.gradeRow {
+  min-width: 210px !important;
+  max-width: 210px !important;
+}
+.grade-input {
+  width: 189px;
+  padding: 5px;
+  margin-right: 5px;
+  border: none;
+  position: relative;
+  z-index: 0;
+  text-decoration: none;
+}
+
+.submit-button {
+  background-color: rgb(23, 196, 23);
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  top: 0;
+  right: 0;
+  position: absolute;
+  z-index: 1;
+}

@@ -1,0 +1,29 @@
+{
+  "main": "index.js",
+  "scripts": {
+    "client-build": "cd client && npm run build",
+    "install-client": "cd client && npm run install",
+    "postbuild": "npm run install && npm run install-client && npm run client-build",
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "email-validator": "^2.0.4",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "lodash": "^4.17.21",
+    "mongodb": "^5.5.0",
+    "mongoose": "^7.2.0",
+    "morgan": "^1.10.0",
+    "nodemailer": "^6.9.3",
+    "nodemon": "^2.0.22",
+    "password-validator": "^5.3.0",
+    "qrcode": "^1.5.3",
+    "speakeasy": "^2.0.0",
+    "util": "^0.12.5"
+  }
+}

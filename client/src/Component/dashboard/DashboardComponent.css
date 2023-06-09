@@ -1,0 +1,137 @@
+.DashboardContainer {
+  width: 100%;
+}
+.container {
+  margin-top: 1rem;
+}
+.courseContainer {
+  width: 90%;
+}
+.row {
+  margin-top: 1rem;
+}
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -500px; 
+  height: 100%;
+  width: 30rem;
+  background-color: #fff;
+  transition: all 0.6s ease-in;
+  z-index: 9999;
+  background-color:aliceblue;
+}
+
+.sidebar-open {
+  right: 0; /* Moves the sidebar into the visible area */
+}
+
+.card {
+  border: 1px solid #ccc;
+
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.adddbtn {
+  padding: 10px 30px;
+}
+.card-header {
+  min-height: 3.5rem;
+  background-color: #a5d5fd;
+  padding: 0.75rem;
+  font-weight: bold;
+}
+.arrow-button {
+  padding: 3px 8px;
+  background-color: #61ba64;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  position: absolute;
+  bottom: 0;
+  right: 10px;
+}
+.Description {
+  min-height: 10rem;
+}
+.card-body {
+  /* height: 10rem; */
+  padding: 0.75rem;
+}
+
+.card-text {
+  margin: 0;
+}
+@media(max-width:500px) {
+  .sidebar{
+    width: 20rem;
+  }
+  
+}
+/* <div className="row">
+<div className="col-xl-3 col-sm-6 mb-3">
+  <div className="card text-white bg-primary o-hidden h-100">
+    <div className="card-body">
+      <div className="card-body-icon">
+        <i className="fa fa-fw fa-comments"></i>
+      </div>
+      <div className="mr-5">26 New Messages!</div>
+    </div>
+    <a className="card-footer text-white clearfix small" href="#">
+      <span className="float-left">View Details</span>
+      <span className="float-right">
+        <i className="fa fa-angle-right"></i>
+      </span>
+    </a>
+  </div>
+</div>
+<div className="col-xl-3 col-sm-6 mb-3">
+  <div className="card text-white bg-warning o-hidden h-100">
+    <div className="card-body">
+      <div className="card-body-icon">
+        <i className="fa fa-fw fa-list"></i>
+      </div>
+      <div className="mr-5">11 New Tasks!</div>
+    </div>
+    <a className="card-footer text-white clearfix small" href="#">
+      <span className="float-left">View Details</span>
+      <span className="float-right">
+        <i className="fa fa-angle-right"></i>
+      </span>
+    </a>
+  </div>
+</div>
+<div className="col-xl-3 col-sm-6 mb-3">
+  <div className="card text-white bg-success o-hidden h-100">
+    <div className="card-body">
+      <div className="card-body-icon">
+        <i className="fa fa-fw fa-shopping-cart"></i>
+      </div>
+      <div className="mr-5">123 New Orders!</div>
+    </div>
+    <a className="card-footer text-white clearfix small" href="#">
+      <span className="float-left">View Details</span>
+      <span className="float-right">
+        <i className="fa fa-angle-right"></i>
+      </span>
+    </a>
+  </div>
+</div>
+<div className="col-xl-3 col-sm-6 mb-3">
+  <div className="card text-white bg-danger o-hidden h-100">
+    <div className="card-body">
+      <div className="card-body-icon">
+        <i className="fa fa-fw fa-support"></i>
+      </div>
+      <div className="mr-5">13 New Tickets!</div>
+    </div>
+    <a className="card-footer text-white clearfix small" href="#">
+      <span className="float-left">View Details</span>
+      <span className="float-right">
+        <i className="fa fa-angle-right"></i>
+      </span>
+    </a>
+  </div>
+</div>
+</div> */

@@ -1,0 +1,34 @@
+.email-verification-success {
+
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    background-color: #dbf6ff;
+    border-radius: 5px;
+    align-content: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    
+  }
+  .verifyEmailDiv{
+    align-content: center;
+    justify-content: center;
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+
+  }
+  .email-verification-success h2 {
+    font-size: 24px;
+    color: Green;
+  }
+  
+  .email-verification-success p {
+    font-size: 16px;
+    color: #666;
+    margin-top: 10px;
+  }
+  
