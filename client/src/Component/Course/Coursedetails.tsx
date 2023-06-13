@@ -52,8 +52,6 @@ const Coursedetails: React.FC = () => {
         console.log('Error While Fetching Course: ', resp)
         return
       }
-
-      console.log('Course:', resp.data.course)
       setCourse(resp.data.course)
       fetchChapterForCourses(resp.data.course._id).catch((err) => {
         console.log('Error WHile Fetching Chapters: ', err)

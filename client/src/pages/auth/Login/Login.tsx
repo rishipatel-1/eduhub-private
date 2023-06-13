@@ -17,11 +17,9 @@ const Login: React.FC = () => {
   const navigator = useNavigate()
 
   const handleSubmit = (event: any) => {
-    console.log('clicked')
     event.preventDefault()
 
     login({ email, password, code }).then(async (resp: any) => {
-      console.log(resp)
       if (resp === null || resp === undefined) {
         toast.error('Invalid UserName or Password')
         return
@@ -40,7 +38,6 @@ const Login: React.FC = () => {
       } else if (user.role === 'student') {
         navigator('/Studentdashboard')
       }
-      console.log('Logged In if here')
     }).catch(err => {
       console.log('Error While Logging in: ', err)
     })

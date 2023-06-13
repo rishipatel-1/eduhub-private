@@ -66,15 +66,8 @@ const StudentDetailsComponent: React.FC = () => {
           chapters
         }
       })
-      console.log('Data: ', subm)
-      const studentName = resp?.data?.student?.name
-      const studentEmail = resp?.data?.student?.email
-      const studentStack = resp?.data?.student?.stack
       setStudent(resp?.data?.student)
       setSubmissions(subm)
-      console.log('Student Name: ', studentName)
-      console.log('Student Email: ', studentEmail)
-      console.log('Student Stack: ', studentStack)
     } catch (err) {
       console.log('Error While Fetching Submissions: ', err)
     } finally {

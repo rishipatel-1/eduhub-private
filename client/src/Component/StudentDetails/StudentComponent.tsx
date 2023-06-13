@@ -80,7 +80,6 @@ const UserComponent: React.FC = () => {
       console.log('Error While Fetching All Users:', resp)
       return
     }
-    console.log('All Users:', resp.data.users)
     setStudents(resp.data.users)
   } catch (err) {
     console.log('Error While Fetching All Users:', err)
@@ -125,7 +124,6 @@ const UserComponent: React.FC = () => {
 
   const handleSaveStudent = () => {
     setLoading(true) // Set loading state to true
-    console.log('enroll_student:', newStudent)
     enrollmultiplecourses({ studentEmail: newStudent.email, stack: newStudent.stack, courseList: newStudent.courseslist })
       .then(async (resp: any) => {
         if (resp.status !== 200) {
@@ -133,7 +131,6 @@ const UserComponent: React.FC = () => {
           return
         }
         toast.success(resp.data.message)
-        console.log('All Students Added Result:', resp.data.users)
       })
       .catch(err => {
         console.log('Error While Adding Students:', err)
@@ -187,7 +184,6 @@ const UserComponent: React.FC = () => {
 
       // setCourses(resp.data.courses)
       toast.success(resp.data.message)
-      console.log('Student Enrollment Deleted:', resp.data)
       fetchAllUsers()
       // setStudents(resp.data.users)
     }).catch(err => {
@@ -195,9 +191,6 @@ const UserComponent: React.FC = () => {
     })
 
     fetchAllUsers()
-    // fetchAllUsers().catch(err => {
-    //   console.log('Error', err)
-    // })
   }
   const handleViewGrades = (studentId: string) => {
     navigate(`/gradeStudent/${studentId}`)
@@ -292,7 +285,6 @@ const UserComponent: React.FC = () => {
                       <BsPencil
                         className="icon m-1"
                         onClick={() => {
-                          console.log('Selected Student:', student)
                           handleEditModalOpen(student)
                         }}
                       />
