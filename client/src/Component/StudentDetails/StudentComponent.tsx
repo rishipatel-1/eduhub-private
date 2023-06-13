@@ -3,14 +3,17 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
 import React, { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Modal, Button } from 'react-bootstrap'
-import { BsPencil, BsTrash } from 'react-icons/bs'
+import { BsPencil, BsTrash, BsEyeFill, BsArrowLeft, BsArrowRight } from 'react-icons/bs'
 import { useSelector } from 'react-redux'
 import { type RootState } from '../../store/Store' // Replace 'path/to/redux/store' with the actual path to your store configuration file
 import './StudentComponent.css'
 import { getAllCourses, enrollmultiplecourses, removeEnrollment } from '../../api/courses'
 import { getAllUsers } from '../../api/users'
 import { toast } from 'react-hot-toast'
+import Select from 'react-select'
+import LoadingSpinner from '../Loader/LoadingSpinner'
 
 interface Student {
   id: number
@@ -33,6 +36,22 @@ const UserComponent: React.FC = () => {
   const [students, setStudents] = useState<any[]>([])
   const [courses, setCourses] = useState<string[]>([]) // Added state for courses
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [showDetails, setShowDetails] = useState(false)
+  const itemsPerPage = 10
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => prevPage + 1)
+  }
+
+  const handlePrevPage = () => {
+    setCurrentPage((prevPage) => prevPage - 1)
+  }
+
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedCourses = courses && courses.slice(startIndex, endIndex)
   const [newStudent, setNewStudent] = useState<any>({
     id: 0,
     name: '',
@@ -51,23 +70,25 @@ const UserComponent: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const tableRef = useRef<HTMLTableElement>(null)
 
+  const navigate = useNavigate()
   const fetchAllUsers = async () => {
-    getAllUsers().then(async (resp: any) => {
-      if (resp.status !== 200) {
-        console.log('Error While Fetching  All Users:', resp)
-        return
-      }
-      // setCourses(resp.data.courses)
-      console.log('All Users:', resp.data.users)
-      setStudents(resp.data.users)
-    }).catch(err => {
-      console.log('Error While Fetching  All Users: ', err)
-    })
-  }
+  setLoading(true) // Set loading to true before fetching data
 
+  try {
+    const resp: any = await getAllUsers()
+    if (resp.status !== 200) {
+      console.log('Error While Fetching All Users:', resp)
+      return
+    }
+    console.log('All Users:', resp.data.users)
+    setStudents(resp.data.users)
+  } catch (err) {
+    console.log('Error While Fetching All Users:', err)
+  } finally {
+    setLoading(false) // Set loading to false after receiving the response or in case of an error
+  }
+}
   useEffect(() => {
-    // Fetch students from API or any data source
-    // Initially, the students list will be empty
     fetchAllUsers().catch(err => {
       console.log('Error', err)
     })
@@ -75,8 +96,6 @@ const UserComponent: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    // Fetch courses from API or any data source
-    // Initially, the courses list will be empty
     getAllCourses().then(async (resp: any) => {
       if (resp.status !== 200) {
         console.log('Error While Fetching  All Courses:', resp)
@@ -89,13 +108,9 @@ const UserComponent: React.FC = () => {
     })
     // setCourses([])
   }, [])
-
-  const handleModalOpen = () => {
-    setIsModalOpen(true)
-  }
-
   const handleModalClose = () => {
-    setIsModalOpen(false)
+    setShowDetails(false)
+    setSelectedStudent(false)
   }
 
   const handleEditModalOpen = (student: Student) => {
@@ -109,43 +124,41 @@ const UserComponent: React.FC = () => {
   }
 
   const handleSaveStudent = () => {
-    console.log('enroll_student: ', newStudent)
-    // const id = Math.floor(Math.random() * 9000) + 1000 // Generate random 4-digit ID
-    // const updatedNewStudent = { ...newStudent, id }
-    // const updatedStudents = [...students, updatedNewStudent]
-
-    enrollmultiplecourses({ studentEmail: newStudent.email, stack: newStudent.stack, courseList: newStudent.courseslist }).then(async (resp: any) => {
-      if (resp.status !== 200) {
-        console.log('Error While Adding Student:', resp)
-        return
-      }
-      // setCourses(resp.data.courses)
-      toast.success(resp.data.message)
-      console.log('All Students Added Result:', resp.data.users)
-      // setStudents(resp.data.users)
-    }).catch(err => {
-      console.log('Error While Adding Students: ', err)
-    })
-
-    //  setStudents(updatedStudents)
-    setNewStudent({
-      id: 0,
-      name: '',
-      stack: '',
-      courseslist: [],
-      coursetitles: [],
-      email: '',
-      user_role: 'student',
-      username: '',
-      _id: '',
-      courses: []
-    })
-
-    fetchAllUsers().catch(err => {
-      console.log('Error', err)
-    })
-    setIsModalOpen(false)
-    scrollToLatestStudent()
+    setLoading(true) // Set loading state to true
+    console.log('enroll_student:', newStudent)
+    enrollmultiplecourses({ studentEmail: newStudent.email, stack: newStudent.stack, courseList: newStudent.courseslist })
+      .then(async (resp: any) => {
+        if (resp.status !== 200) {
+          console.log('Error While Adding Student:', resp)
+          return
+        }
+        toast.success(resp.data.message)
+        console.log('All Students Added Result:', resp.data.users)
+      })
+      .catch(err => {
+        console.log('Error While Adding Students:', err)
+      })
+      .finally(() => {
+        setLoading(false) // Set loading state back to false
+        setNewStudent({
+          id: 0,
+          name: '',
+          stack: '',
+          courseslist: [],
+          coursetitles: [],
+          email: '',
+          user_role: 'student',
+          username: '',
+          _id: '',
+          courses: []
+        })
+        fetchAllUsers().catch(err => {
+          console.log('Error:', err)
+        })
+        setIsModalOpen(false)
+        scrollToLatestStudent()
+        setShowDetails(false)
+      })
   }
 
   const handleUpdateStudent = () => {
@@ -161,14 +174,11 @@ const UserComponent: React.FC = () => {
       return student
     })
     setStudents(updatedStudents)
-    setSelectedStudent(null)
+    setSelectedStudent(false)
     setIsEditModalOpen(false)
   }
 
   const handleDeleteStudent = (studentId: string, courseId: string) => {
-    // const updatedStudents = students.filter((student) => student.id !== id)
-    // setStudents(updatedStudents)
-
     removeEnrollment({ studentId, courseId }).then(async (resp: any) => {
       if (resp.status !== 200) {
         console.log('Error While Deleting Student Enrollment:', resp)
@@ -188,6 +198,9 @@ const UserComponent: React.FC = () => {
     // fetchAllUsers().catch(err => {
     //   console.log('Error', err)
     // })
+  }
+  const handleViewGrades = (studentId: string) => {
+    navigate(`/gradeStudent/${studentId}`)
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
@@ -213,50 +226,12 @@ const UserComponent: React.FC = () => {
       )
     }
   }
-  const handleCourseSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    // console.log('E.target: ', e.target.value, e.target.title)
-    const { value } = e.target
-
-    if (newStudent.courses.includes(value)) {
-      alert('Course is already selected')
-      return
-    }
-    setNewStudent((prevStudent: { courseslist: any }) => ({
-      ...prevStudent,
-      courseslist: [...prevStudent.courseslist, value]
-    }))
-
-    // const selcourse: any = courses.filter((course: any) => course._id === value)
-    // console.log('Already Presetn: ', newStudent.coursetitles)
-    // console.log('sel Course: ', selcourse[0]?.title)
-
-    // setNewStudent((prevStudent) => ({
-    //   ...prevStudent,
-    //   coursetitles: [...prevStudent.coursetitles, selcourse[0]?.title]
-    // }))
-    // console.log('Title: ', newStudent.coursetitles)
+  const toggleSidebar = () => {
+    setShowDetails((prevState) => !prevState)
   }
-
   const handleEditCourseSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target
-    // setSelectedStudent((prevStudent: { courses: any }) => {
-    //   if (prevStudent != null) {
-    //     const updatedCourses = [...prevStudent.courseslist, value]
-    //     return { ...prevStudent, courseslist: updatedCourses }
-    //   }
-    //   return null
-    // })
   }
-
-  // const handleEditDeleteCourse = (course: string) => {
-  //   setSelectedStudent((prevStudent) => {
-  //     if (prevStudent) {
-  //       const updatedCourses = prevStudent.courses.filter((c) => c !== course);
-  //       return { ...prevStudent, courses: updatedCourses };
-  //     }
-  //     return null;
-  //   });
-  // };
 
   const scrollToLatestStudent = () => {
     if (tableRef.current != null) {
@@ -265,56 +240,159 @@ const UserComponent: React.FC = () => {
   }
 
   return (
+    <>
+          {loading && (
+        <div className="loader-container">
+          <div className="text-center">
+            <LoadingSpinner/>
+          </div>
+        </div>
+      )}
+      <div className={`content ${loading ? 'blur' : ''}`}>
     <div className="container">
-      <h3>Student Details</h3>
-      <button onClick={handleModalOpen}>Add Student</button>
-      <div className="table-container">
-        <table ref={tableRef}>
-          <thead>
-            <tr>
-              <th>user name</th>
-              <th>email</th>
-              <th>Stack</th>
-              <th>Courses</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {courses && courses.map((course: any) => (
-              course.enrolled_students?.map((student: any) => (
+    <div className="container-fluid w-100">
+  <div className="row d-flex justify-content-between align-items-center">
+    <div className="col-auto p-0">
+      <h3 className="mt-3">Student Details</h3>
+    </div>
+    <div className="col-auto p-0">
+      <button
+        className="btn btn-primary mt-3"
+        onClick={() => {
+          toggleSidebar()
+        }}
+      >
+        {showDetails ? 'Add Student' : 'Add Student'}
+      </button>
+    </div>
+  </div>
+</div>
+<div className="table-container">
+      <table ref={tableRef}>
+        <thead>
+          <tr>
+            <th>user name</th>
+            <th>email</th>
+            <th>Stack</th>
+            <th>Courses</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {paginatedCourses &&
+            paginatedCourses.map((course: any) =>
+              course.enrolled_students?.map((student: Student) => (
                 <tr key={`${student._id}-${course._id}`}>
                   <td>{student.username}</td>
                   <td>{student.email}</td>
                   <td>{student.stack === null ? 'No Stack' : student.stack}</td>
                   <td>{course.title}</td>
                   <td>
-                    <BsPencil
-                      className="m-2"
-                      onClick={() => {
-                        console.log('Selected Student: ', student)
-                        handleEditModalOpen(student)
-                      }}
-                    />
-                    <BsTrash
-                      className="m-2"
-                      onClick={() => {
-                        handleDeleteStudent(student._id, course._id)
-                      }}
-                    />
+                    <div className="icon-container">
+                      <BsPencil
+                        className="icon m-1"
+                        onClick={() => {
+                          console.log('Selected Student:', student)
+                          handleEditModalOpen(student)
+                        }}
+                      />
+                      <BsTrash
+                        className="icon m-1"
+                        onClick={() => {
+                          handleDeleteStudent(student._id, course._id)
+                        }}
+                      />
+                      <BsEyeFill
+                        className="icon m-1"
+                        onClick={() => {
+                          handleViewGrades(student._id)
+                        }}
+                      />
+                    </div>
                   </td>
                 </tr>
               ))
-            ))}
-          </tbody>
-        </table>
+            )}
+        </tbody>
+      </table>
+      <div className="pagination-buttons text-center">
+        <button
+        className='page-arrow m-2'
+          onClick={handlePrevPage}
+          disabled={currentPage === 1}
+        >
+          <BsArrowLeft className="icon text-dark" />
+        </button>
+        <button
+        className='page-arrow m-2'
+          onClick={handleNextPage}
+          disabled={endIndex >= (courses && courses.length)}
+        >
+           <BsArrowRight className="icon text-dark " />
+        </button>
       </div>
-
-      <Modal show={isModalOpen} onHide={handleModalClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Add Student</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+    </div>
+    </div>
+    <div className={`sidebar ${selectedStudent ? 'sidebar-open' : ''} ${loading ? 'd-none' : ''}`}>
+        <div className="row mt-4 m-4">
+          <div className="col-md-12">
+            <div className="card">
+              <div className="card-header">Add Student</div>
+              <div className="card-body">
+              <div>
+            <label htmlFor="email">email:</label>
+            <input
+              type="text"
+              id="email"
+              name="email"
+              value={selectedStudent?.email ?? ''}
+              onChange={handleEditInputChange}
+            />
+          </div>
           <div>
+            <label htmlFor="stack">Stack:</label>
+            <input
+              type="text"
+              id="stack"
+              name="stack"
+              value={selectedStudent?.stack ?? ''}
+              onChange={handleEditInputChange}
+            />
+          </div>
+          <div>
+            <label htmlFor="select-course">Select Course:</label>
+            <select id="select-course" onChange={handleEditCourseSelect}>
+              <option value="">-- Select Course --</option>
+              {courses && courses.map((course: any) => (
+                <option key={course._id} value={course._id}>
+                  {course.title}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className='float-end'>
+          <Button variant="secondary" onClick={handleEditModalClose} className='m-2 mt-5'>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleUpdateStudent} className='m-2 mt-5'>
+            Update
+          </Button>
+      </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button className="ms-5" onClick={handleModalClose}>
+        Back
+        </button>
+      </div>
+    <div className={`sidebar ${showDetails ? 'sidebar-open' : ''} ${loading ? 'd-none' : ''}`}>
+        <div className="row mt-4 m-4">
+          <div className="col-md-12">
+            <div className="card">
+              <div className="card-header">Add Student</div>
+              <div className="card-body">
+              <div>
             <label htmlFor="email">Email:</label>
             <input
               type="text"
@@ -345,84 +423,24 @@ const UserComponent: React.FC = () => {
               ))}
             </select>
           </div>
-
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleModalClose}>
+          <div className='float-end'>
+      <Button variant="secondary" onClick={handleModalClose} className="m-2 mt-5">
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSaveStudent}>
+          <Button variant="primary" onClick={handleSaveStudent} className="m-2 mt-5">
             Save
           </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={isEditModalOpen} onHide={handleEditModalClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Student</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div>
-            <label htmlFor="email">email:</label>
-            <input
-              type="text"
-              id="email"
-              name="email"
-              value={selectedStudent?.email ?? ''}
-              onChange={handleEditInputChange}
-            />
+      </div>
+              </div>
+            </div>
           </div>
-          <div>
-            <label htmlFor="stack">Stack:</label>
-            <input
-              type="text"
-              id="stack"
-              name="stack"
-              value={selectedStudent?.stack ?? ''}
-              onChange={handleEditInputChange}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="courses">Courses:</label>
-            <input
-              type="text"
-              id="courses"
-              name="courses"
-              onChange={handleEditInputChange}
-              value={selectedStudent
-                ? selectedStudent?.enrolled_courses.map((course: any) => {
-                  const selcourse: any = courses.filter((c: any) => c._id === course._id)
-                  console.log('selected:', selcourse)
-                  return selcourse[0]?.title
-                }).join(', ')
-                : ''}
-              readOnly
-
-            />
-          </div>
-          <div>
-            <label htmlFor="select-course">Select Course:</label>
-            <select id="select-course" onChange={handleEditCourseSelect}>
-              <option value="">-- Select Course --</option>
-              {courses && courses.map((course: any) => (
-                <option key={course._id} value={course._id}>
-                  {course.title}
-                </option>
-              ))}
-            </select>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleEditModalClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleUpdateStudent}>
-            Update
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+        </div>
+        <button className="ms-5" onClick={handleModalClose}>
+        Back
+        </button>
+      </div>
+      </div>
+    </>
   )
 }
 

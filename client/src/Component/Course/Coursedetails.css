@@ -7,6 +7,15 @@
   margin-bottom: 5px;
 }
 
+
+
+.description {
+  display: -webkit-box;
+  --max-lines: 2;  -webkit-box-orient: vertical;
+  overflow: hidden;
+ -webkit-line-clamp: var();
+}
+
 .title {
   font-size: 30px;
   font-weight: 600;
@@ -76,4 +85,10 @@ background-color: #a5d5fd;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+@media(max-width:500px) {
+  .sidebar-course{
+    width: 20rem;
+  }
+  
 }

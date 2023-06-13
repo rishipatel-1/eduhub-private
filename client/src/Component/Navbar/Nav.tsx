@@ -2,6 +2,7 @@ import React, { useState, useEffect, Children } from 'react'
 import './Navbar.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { setCookie } from 'react-use-cookie'
+import { IoLogOutOutline } from 'react-icons/io5'
 
 const Navbar = ({ isAdmin, children }: any) => {
   // Accept a prop "isAdmin" to determine the user role
@@ -51,7 +52,7 @@ const Navbar = ({ isAdmin, children }: any) => {
             onClick={toggleMenu}
           />
         )}
-        <div className="drop-item  fixed-bottom-dropdown">
+        <div className="drop-item  fixed-bottom-dropdown mr-3">
         <a
   href="#"
   className="d-flex align-items-center text-decoration-none dropdown-toggle text-white"
@@ -59,13 +60,10 @@ const Navbar = ({ isAdmin, children }: any) => {
   data-bs-toggle="dropdown"
   aria-expanded="false"
 >
-  <div className="sign-out-icon text-white">
-    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" className="bi bi-box-arrow-right" viewBox="0 0 16 16">
-      <path fillRule="evenodd" d="M11.5 4.5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0v-6zm-4.5 9a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 1 1 0v2a.5.5 0 0 1-.5.5zm5-9a.5.5 0 0 1 0-1H13a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6.5a.5.5 0 0 1 0-1H13a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H6.5a.5.5 0 0 1 0-1H13z"/>
-    </svg>
+  <div className="sign-out-icon text-white" style={{ height: '25px' }}>
+  <IoLogOutOutline className="icon"/>
   </div>
 </a>
-
           <ul className="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
             <li>
               <div className="dropdown-item" onClick={handleSignout}>
@@ -111,7 +109,7 @@ const Navbar = ({ isAdmin, children }: any) => {
                     <i className="fa fa-users" aria-hidden="true"></i>
                     <span>Manage Students</span>
                   </Link>
-                  <Link
+                  {/* <Link
                     className="nav__item"
                     role="button"
                     to="/gradeStudent"
@@ -122,7 +120,7 @@ const Navbar = ({ isAdmin, children }: any) => {
                   >
                     <i className="fa fa-user" aria-hidden="true"></i>
                     <span>Student Update</span>
-                  </Link>
+                  </Link> */}
                 </>
               )}
 

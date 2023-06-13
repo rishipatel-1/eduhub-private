@@ -7,6 +7,21 @@
 h3 {
   margin-bottom: 10px;
 }
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -500px; 
+  height: 100%;
+  width: 30rem;
+  background-color: #fff;
+  transition: all 0.6s ease-in;
+  z-index: 9999;
+  background-color:aliceblue;
+}
+
+.sidebar-open {
+  right: 0; /* Moves the sidebar into the visible area */
+}
 
 table {
   width: 100%;
@@ -155,4 +170,26 @@ button:hover {
 }
 .courseTable {
   min-width: 170px !important;
+}
+.loader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.page-arrow{
+  background-color: #b3d4fc;
+}
+.btn-add-student{
+  width: 125px;
+}
+
+.content.blur {
+  filter: blur(5px);
 }

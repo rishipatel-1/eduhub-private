@@ -8,7 +8,8 @@ const submissionSchema = new mongoose.Schema({
     enum: ["PENDING", "Not Submitted", "Submitted", "Graded", "Re Submitted"],
     default: "Not Submitted",
   },
-  grade: { type: Number },
+  submission: { type: String, default: null },
+  grade: { type: Number, default: null },
   gradedBy: { type: mongoose.Types.ObjectId, ref: "users" },
 });
 

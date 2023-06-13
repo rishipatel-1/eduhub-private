@@ -58,3 +58,43 @@ export const getAllSubmission2 = async () => (
     console.log(err)
   })
 )
+
+export const getAllSubmission3 = async () => (
+  await axiosInstance('/getAllSubmission3', {
+    method: 'GET'
+  }).then((resp) => resp).catch((err) => {
+    console.log(err)
+  })
+)
+
+export const getAllSubmission4 = async (studentId: any) => (
+  await axiosInstance(`/getAllSubmission4/${studentId}`, {
+    method: 'GET'
+  }).then((resp) => resp).catch((err) => {
+    console.log(err)
+  })
+)
+
+export const uploadSubmission = async (payload: any) => {
+  try {
+    axiosInstance.defaults.headers['Content-Type'] = 'multipart/form-data'
+
+    const response = await axiosInstance.post('/uploadSubmission', payload)
+    axiosInstance.defaults.headers['Content-Type'] = 'application/json'
+
+    console.log('FrontEnd Response:', response)
+    return response
+  } catch (error) {
+    console.log('Error While Uploading File:', error)
+    throw error
+  }
+}
+
+export const deletefileSubmission = async (payload: any) => (
+  await axiosInstance('/deletezipsubmission', {
+    method: 'PUT',
+    data: payload
+  }).then((resp) => resp).catch((err) => {
+    console.log(err)
+  })
+)

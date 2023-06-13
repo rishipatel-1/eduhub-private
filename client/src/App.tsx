@@ -29,7 +29,7 @@ function App () {
             <Route path='/manageEnrollment' Component={UserComponent} />
             <Route path='/courses' Component={StudentCourse} />
             <Route path='/courseProgress/:courseId' Component={CourseProgress} />
-            <Route path='/gradeStudent' Component={UserDetailsComponent} />
+            <Route path='/gradeStudent/:studentId' Component={UserDetailsComponent} />
           </Route>
         </Routes>
       </div>

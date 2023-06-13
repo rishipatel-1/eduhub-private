@@ -1,16 +1,17 @@
 const http = require("http");
-const express  =require("express")
+
 require("dotenv").config();
 const { initDB } = require("./db.js");
 const app = require("./app");
-const path = require("path");
+const express = require("express")
+
+// console.log("Process: ", process.env);
 
 initDB();
 
 const port = process.env.PORT || "3001";
 app.set("port", port);
 const server = http.createServer(app);
-
 server.listen(port);
 server.on("error", (err) => {
   console.error(err);

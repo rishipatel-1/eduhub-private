@@ -26,7 +26,9 @@
 .top-bar strong span {
   color: #ff6f00;
 }
-
+.error-add-course{
+  color: red;
+}
 .nav {
   background-color: #13676b;
   height: 100vh;

@@ -30,10 +30,13 @@
     "react-dropzone": "^14.2.3",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.9.0",
+    "react-loader-spinner": "^5.3.4",
     "react-modal": "^3.16.1",
     "react-redux": "^8.0.7",
     "react-router-dom": "^6.11.2",
     "react-scripts": "^5.0.1",
+    "react-select": "^5.7.3",
+    "react-spinners": "^0.13.8",
     "react-use-cookie": "^1.4.0",
     "recharts": "^2.6.2",
     "victory": "^36.6.10",
@@ -45,7 +48,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint --fix --ext .ts,.tsx ./src"
-    
   },
   "eslintConfig": {
     "extends": [

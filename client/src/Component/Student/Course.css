@@ -1,7 +1,17 @@
+.container-mained {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+}
 
 .course-details {
   padding: 20px;
-  background-color: #f5f5f5;
+  background-color: #ffffff;
+  border-radius: 8px;
+  width: 80%;
+  box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.1), 2px 2px 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 .course-title {
@@ -13,65 +23,41 @@
 .course-description {
   margin-bottom: 20px;
 }
-
-.chapter {
-  margin-bottom: 20px;
+.chapter-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
 }
 
-.back-button {
-  margin-top: 20px;
+.chapter-card {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.1), 2px 2px 2px 2px rgba(0, 0, 0, 0.06);
 }
 
-.grade-section {
-  margin-top: 20px;
-  padding: 10px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-}
-
-.grade-item {
+.chapter-title {
+  font-size: 20px;
+  font-weight: bold;
   margin-bottom: 10px;
 }
 
-/* Animation styles using Framer Motion */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.chapter {
-  animation: slideIn 1s ease-in-out;
-}
-
-.grade-section {
-  animation: slideIn 1s ease-in-out;
+.chapter-practical {
+  margin-bottom: 15px;
 }
 
 .dropzone {
-  border: 2px dotted #eed3d3;
-  padding: 5px;
-  background-color: #f9f9f9;
+  border: 2px dashed #eed3d3;
+  padding: 6px;
+  background-color: #ffffff;
   text-align: center;
   cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
 }
-
+.chapter-description{
+  font-weight: 400;
+}
 .dropzone p {
   margin: 0;
 }
@@ -79,9 +65,68 @@
 .dropzone:hover {
   background-color: #f5f5f5;
 }
-.container-mained {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+
+.dropzone.active {
+  background-color: #ececec;
+}
+
+
+
+.submit-button:hover {
+  background-color: #45a049;
+}
+
+.back-button {
+  margin-top: 20px;
+  background-color: #555555;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #444444;
+}
+
+.grade-section {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  animation: slideIn 0.8s ease-in-out;
+}
+
+.grade-item {
+  margin-bottom: 10px;
+}
+
+.grade-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.grade-value {
+  font-size: 14px;
+  margin: 0;
+}
+
+.show-grades-button {
+  margin-top: 20px;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.show-grades-button:hover {
+  background-color: #1e87db;
 }

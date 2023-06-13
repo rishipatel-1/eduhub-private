@@ -122,7 +122,7 @@ const Login: React.FC = () => {
                   </div>
                   <div className="text sign-up-text">
                   Don&#x3f;t have an account&#x3f;{' '}
-                    <label htmlFor="flip">Signup now</label>
+                    <label htmlFor="flip">Register now</label>
 
                   </div>
                 </div>

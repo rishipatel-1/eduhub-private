@@ -57,7 +57,7 @@ const Register: React.FC = () => {
     <>
       <Toaster />
       <div className="signup-form">
-        <div className="title">Signup</div>
+        <div className="title">Register</div>
         <form onSubmit={handleSubmit}>
           <div className="input-boxes">
             <div className="input-box">

@@ -16,6 +16,7 @@ import {
 } from '../../api/chapter'
 import { getCourseById } from '../../api/courses'
 import { toast } from 'react-hot-toast'
+import LoadingSpinner from '../Loader/LoadingSpinner'
 
 interface SubCategory {
   _id: string
@@ -32,6 +33,7 @@ const Coursedetails: React.FC = () => {
   const [showDetails, setShowDetails] = useState(false)
   const [subCategoryDescription, setSubCategoryDescription] = useState('')
   const [subCategoryPractical, setSubCategoryPractical] = useState('')
+  const [loading, setLoading] = useState(false)
   const [chapterId, setchapterId] = useState('')
   const [imageFile, setImageFile] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -39,6 +41,7 @@ const Coursedetails: React.FC = () => {
   const { courseId } = useParams()
   const [course, setCourse] = useState<any>({})
   const navigator = useNavigate()
+  const [selectedCourse, setSelectedCourse] = useState(false)
   const [base64String, setBase64String] = useState<string | null>(null)
   const [formErrors, setFormErrors] = useState({ subCategoryTitle: '', subCategoryDescription: '' })
 
@@ -68,6 +71,7 @@ const Coursedetails: React.FC = () => {
   }
   const fetchChapterForCourses = async (courseId: any) => {
     try {
+      setLoading(true)
       const resp: any = await getChapterForCourse(courseId)
       if (resp.status !== 200) {
         console.log('Error While Fetching Course: ', resp)
@@ -77,6 +81,8 @@ const Coursedetails: React.FC = () => {
       setSubCategories(resp.data.chapters)
     } catch (err) {
       console.log('Error While Fetching Course: ', err)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -109,6 +115,7 @@ const Coursedetails: React.FC = () => {
 
   const handleModal = () => {
     setShowDetails(false)
+    setSelectedCourse(false)
   }
   const addSubCategory = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -186,6 +193,7 @@ const Coursedetails: React.FC = () => {
   }
 
   const handleEdit = (index: number, cchapterId: string) => {
+    setSelectedCourse(true)
     const subCategoryToEdit = subCategories[index]
     setSubCategoryTitle(subCategoryToEdit.title)
     setSubCategoryDescription(subCategoryToEdit.description)
@@ -224,135 +232,138 @@ const Coursedetails: React.FC = () => {
 
   return (
     <>
-      <div className="container CourseContainer">
-        <button
-          className="back-btn"
-          onClick={() => {
-            navigator('/Admindashboard')
-          }}
-        >
-          &larr; &nbsp;Back
-        </button>
-
-        <div className="course-details">
-          <h2 className="fs-1 fw-bold">{course.title}</h2>
-          <p className="py-2">{course.description}</p>
-
-          <button className="btn btn-primary mt-4" onClick={toggleSidebar}>
-            {showDetails ? 'Close' : 'Add Chapter'}
+      {loading && (
+        <div className="loader-container">
+          <div className="text-center">
+            <LoadingSpinner/>
+          </div>
+        </div>
+      )}
+      <div className={`content ${loading ? 'blur' : ''}`}>
+        <div className="container CourseContainer">
+          <button
+            className="back-btn"
+            onClick={() => {
+              navigator('/Admindashboard')
+            }}
+          >
+            &larr; &nbsp; Back
           </button>
+          <div className="courses-details">
+            <h2 className="fs-1 fw-bold">{course.title}</h2>
+            <p className="py-2">{course.description}</p>
+            <div className="d-flex align-items-center justify-content-between">
+  <h5 className="mt-4">List Of Chapters</h5>
+  <button className="btn btn-primary mt-4" onClick={toggleSidebar}>
+    {showDetails ? 'Add Chapter' : 'Add Chapter'}
+  </button>
+</div>
+            <div className="row d-flex flex-column w-100">
+  <div className="subcategories">
 
-          <div className="subcategories">
-            <h5>List Of Chapters</h5>
-            {subCategories.map((subCategory, index) => (
-              <Card key={index} className="mt-4">
-                <Card.Body className="p-4 w-auto">
-                  <div className="d-flex justify-content-between">
-                    <Card.Title className="title">
-                      {subCategory.title}
-                    </Card.Title>
-                    <div className="card-header-icons">
-                      <Button
-                        variant="link"
-                        onClick={() => {
-                          handleEdit(index, subCategory._id)
-                        }}
-                      >
-                        <BsPencil />
-                      </Button>
-                      <Button
-                        variant="link"
-                        onClick={() => {
-                          handleDelete(index, subCategory._id)
-                        }}
-                      >
-                        <BsTrash />
-                      </Button>
-                    </div>
-                  </div>
-                  <Card.Text>{subCategory.description}</Card.Text>
-                  <Card.Text>Practical: {subCategory.practical}</Card.Text>
-                  {subCategory.image != null && (
-                    <img
-                      // src={URL.createObjectURL(subCategory.image)}
-                      src={subCategory.image}
-                      alt="Subcategory Image"
-                      className="img-fluid mt-3"
-
-                    />
-                  )}
-                </Card.Body>
-              </Card>
-            ))}
+    <div className="row row-cols-1 row-cols-md-3 g-4">
+      {subCategories.map((subCategory, index) => (
+        <div className="col mb-4" key={index}>
+          <Card className="h-100">
+            <Card.Body className="p-4 w-auto">
+              <div className="d-flex flex-row flex-sm-row justify-content-sm-between">
+                <Card.Title className="title">{subCategory.title}</Card.Title>
+                <div className="card-header-icons ms-auto ms-sm-0">
+                  <Button
+                    variant="link"
+                    onClick={() => {
+                      handleEdit(index, subCategory._id)
+                    }}
+                  >
+                    <BsPencil />
+                  </Button>
+                  <Button
+                    variant="link"
+                    onClick={() => {
+                      handleDelete(index, subCategory._id)
+                    }}
+                  >
+                    <BsTrash />
+                  </Button>
+                </div>
+              </div>
+              <Card.Text className='mt-3 mb-3'>{subCategory.description}</Card.Text>
+              <Card.Text>Practical: {subCategory.practical}</Card.Text>
+              {subCategory.image != null && (
+                <img
+                  src={subCategory.image}
+                  alt="Subcategory Image"
+                  className="img-fluid mt-3 h-50"
+                />
+              )}
+            </Card.Body>
+          </Card>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+          </div>
+        </div>
+        <div className={`sidebar-course ${showDetails ? 'sidebar-open' : ''} ${loading ? 'd-none' : ''}`}>
+          <div className="card m-4">
+            <div className="title-card">
+              <h5 className="m-3">{selectedCourse ? 'Update Chapter' : 'Add Chapter'}</h5>
+            </div>
+            <form onSubmit={addSubCategory} className="m-4">
+              <div className="form-group">
+                <label>Chapter Title</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={subCategoryTitle}
+                  onChange={(e) => {
+                    setSubCategoryTitle(e.target.value)
+                  }}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Chapter Description</label>
+                <textarea
+                  className="form-control"
+                  value={subCategoryDescription}
+                  required
+                  onChange={(e) => {
+                    setSubCategoryDescription(e.target.value)
+                  }}
+                ></textarea>
+              </div>
+              <div className="form-group">
+                <label>Practical</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={subCategoryPractical}
+                  onChange={(e) => {
+                    setSubCategoryPractical(e.target.value)
+                  }}
+                />
+              </div>
+              <div className="form-group">
+                <label>Image</label>
+                <input
+                  type="file"
+                  className="form-control"
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                />
+              </div>
+              <button type="submit" className="btn btn-primary mt-3">
+                {selectedCourse ? 'Update Chapter' : 'Add Chapter'}
+              </button>
+            </form>
+            <button className="ms-4 w-25" onClick={handleModal}>
+              back
+            </button>
           </div>
         </div>
       </div>
-
-        <div className={`sidebar-course ${showDetails ? 'sidebar-open' : ''}`}>
-          <div className="card m-4">
-          <div className="title-card">
-           <h5 className="m-3">Manage Chapters</h5>
-          </div>
-          <form onSubmit={addSubCategory} className="m-4">
-            <div className="form-group">
-              <label>Chapter Title</label>
-              <input
-                type="text"
-                className="form-control"
-                value={subCategoryTitle}
-                onChange={(e) => {
-                  setSubCategoryTitle(e.target.value)
-                }}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Chapter Description</label>
-              <textarea
-                className="form-control"
-                value={subCategoryDescription}
-                required
-                onChange={(e) => {
-                  setSubCategoryDescription(e.target.value)
-                }}
-              ></textarea>
-            </div>
-            <div className="form-group">
-              <label>Practical</label>
-              <input
-                type="text"
-                className="form-control"
-                value={subCategoryPractical}
-                onChange={(e) => {
-                  setSubCategoryPractical(e.target.value)
-                }}
-              />
-            </div>
-            <div className="form-group">
-              <label>Image</label>
-              <input
-                type="file"
-                className="form-control"
-                ref={fileInputRef}
-                // onChange={(e) => {
-                //   setImageFile(
-                //     e.target.files != null ? e.target.files[0] : null
-                //   )
-                // }}
-                onChange={handleImageUpload}
-              />
-            </div>
-
-            <button type="submit" className="btn btn-primary mt-3">
-             Add Chapter
-            </button>
-          </form>
-          <button className="ms-3 w-25" onClick={handleModal}>
-            back
-          </button>
-          </div>
-        </div>
-
     </>
   )
 }

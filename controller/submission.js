@@ -3,9 +3,15 @@ const { Submissions } = require("../models/submission");
 const { User } = require("../models/user");
 const { Chapters } = require("../models/chapters");
 const { Courses } = require("../models/courses");
+const {
+  uploadFileToFirebase,
+  deleteFromFirebase,
+} = require("../utils/uploadToFireBase");
+const { ObjectId } = require("mongodb");
 
 const AddSubmission = async (req, res) => {
   try {
+    const { fileUrl } = req.body;
     const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid) {
@@ -31,6 +37,7 @@ const AddSubmission = async (req, res) => {
         {
           $set: {
             status: "Re Submitted",
+            submission: fileUrl,
           },
         },
         { new: true }
@@ -69,7 +76,8 @@ const AddSubmission = async (req, res) => {
     const submission = await Submissions.create({
       student: val_result.user,
       chapter: req.params.chapterId,
-      // status,
+      submission: fileUrl,
+      status: "Submitted",
     });
 
     if (!submission) {
@@ -154,7 +162,7 @@ const gradeSubmission = async (req, res) => {
       {
         $set: {
           grade,
-          status,
+          status: "Graded",
           gradedBy: val_result.user,
         },
       },
@@ -313,6 +321,248 @@ const testgetSubmssision = async (req, res) => {
   }
 };
 
+const uploadSubmission = async (req, res) => {
+  try {
+    const { chapterId } = req.body;
+
+    const val_result = await validateToken(req.headers.authorization);
+
+    if (!val_result.valid) {
+      res.status(401).json({
+        message: "Access Denied ",
+      });
+      return;
+    }
+
+    const chapter = await Chapters.findOne({ _id: chapterId });
+
+    if (!chapter) {
+      console.log("Chapter Does not Exists for Sumission: ", chapter);
+      res.status(500).json({
+        message: "Error While uploading Submission for Chatper: ",
+        err: chapter,
+      });
+    }
+
+    const uploadedSubmission = await uploadFileToFirebase(
+      req.file,
+      chapterId,
+      val_result.user
+    );
+
+    console.log("UPlaoded File Result : ", uploadedSubmission);
+    if (uploadedSubmission && uploadedSubmission.Location) {
+      console.log("In Here to send status");
+      res.status(200).json({
+        message: "file uploaded successfull ",
+        upload_location: uploadedSubmission.Location,
+      });
+      return;
+    }
+    res.status(500).json({ message: "Error While Uploading Submission " });
+  } catch (err) {
+    console.log("Eror While Uploading Submission: ", err);
+    res.status(500).status({
+      message: "Error While Uploading Submission: ",
+      err,
+    });
+    return;
+  }
+};
+
+const deleteSubmissionFile = async (req, res) => {
+  try {
+    const { fileUrl } = req.body;
+
+    const resp = await deleteFromFirebase(fileUrl);
+
+    console.log("Delete File After Submission: ");
+    res.status(200).json({ message: "File Deleted Successfully" });
+  } catch (err) {
+    console.log("Error While Deleting File: ", err);
+    res.status(500).json({ message: "Error While Deleting Files", error: err });
+  }
+};
+
+const getAllSubmissions3 = async (req, res) => {
+  console.log("req.params.studentId: ", req.params.studentId);
+  try {
+    const allsumbissions = await User.aggregate([
+      {
+        $match: {
+          user_role: "student",
+          _id: new ObjectId(req.params.studentId),
+        },
+      },
+      {
+        $lookup: {
+          from: "submissions",
+          let: {
+            studentId: "$_id",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$student", "$$studentId"],
+                },
+              },
+            },
+            {
+              $lookup: {
+                from: "chapters",
+                localField: "chapter",
+                foreignField: "_id",
+                as: "chapter",
+              },
+            },
+            {
+              $lookup: {
+                from: "courses",
+                localField: "chapter.course",
+                foreignField: "_id",
+                as: "course",
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                chapter: {
+                  $arrayElemAt: ["$chapter", 0],
+                },
+                course: {
+                  $arrayElemAt: ["$course", 0],
+                },
+                status: 1,
+                submission: 1,
+                grade: 1,
+                gradedBy: 1,
+              },
+            },
+          ],
+          as: "submissions",
+        },
+      },
+      {
+        $match: {
+          submissions: {
+            $ne: [],
+          },
+        },
+      },
+    ]);
+    if (!allsumbissions) {
+      console.log("Error While Fetching All Submissions ");
+      res.status(500).json({ message: "Error While Fetching the submissions" });
+      return;
+    }
+
+    res
+      .status(200)
+      .json({ message: "All Submissions", submissions: allsumbissions });
+  } catch (err) {
+    console.log("Error While Fetching the Submissions: ", err);
+    res
+      .status(500)
+      .json({ message: "Error WHile fetching the sumbissions", error: err });
+  }
+};
+
+const getAllSubmissions4 = async (req, res) => {
+  try {
+    const studentId = req.params.studentId;
+    const allSubmissions = await Courses.aggregate([
+      {
+        $match: {
+          enrolled_students: new ObjectId(studentId),
+        },
+      },
+      {
+        $lookup: {
+          from: "chapters",
+          localField: "_id",
+          foreignField: "course",
+          as: "chapters",
+        },
+      },
+      {
+        $lookup: {
+          from: "submissions",
+          let: {
+            chapterIds: "$chapters._id",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ["$student", new ObjectId(studentId)],
+                    },
+                    {
+                      $in: ["$chapter", "$$chapterIds"],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "submissions",
+        },
+      },
+      {
+        $addFields: {
+          chapters: {
+            $map: {
+              input: "$chapters",
+              as: "chapter",
+              in: {
+                $mergeObjects: [
+                  "$$chapter",
+                  {
+                    submissions: {
+                      $filter: {
+                        input: "$submissions",
+                        as: "submission",
+                        cond: {
+                          $eq: ["$$submission.chapter", "$$chapter._id"],
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          submissions: 0,
+          enrolled_students: 0,
+        },
+      },
+    ]);
+
+    const studentdetail = await User.findOne({ _id: studentId });
+
+    if (!allSubmissions) {
+      console.log("Error WHile FEtching Submissions: ");
+      res.status(500).json({ message: "Error While Fetching Submissions" });
+      return;
+    }
+    console.log("Data: ", allSubmissions);
+    res
+      .status(200)
+      .json({ submissions: allSubmissions, student: studentdetail });
+  } catch (err) {
+    console.log("Error While Fetching Submissions: ", err);
+    res
+      .status(500)
+      .json({ message: "Error While Fetching Submissions", error: err });
+  }
+};
+
 module.exports = {
   AddSubmission,
   updateSubmission,
@@ -321,4 +571,8 @@ module.exports = {
   getSubmissionByStudentId,
   getAllSubmission,
   testgetSubmssision,
+  uploadSubmission,
+  deleteSubmissionFile,
+  getAllSubmissions3,
+  getAllSubmissions4,
 };
