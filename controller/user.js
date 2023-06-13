@@ -95,7 +95,7 @@ const signup = async (req, res) => {
 
   const verificationToken = await crypto.randomBytes(32).toString("hex");
   const passHash = await getPasswordHash(password);
-  const verificationLink = `${process.env.base_url}:${process.env.PORT}/verify-email/${verificationToken}`;
+  const verificationLink = `${process.env.base_url}/verify-email/${verificationToken}`;
 
   const htmlmsg = `<p>Dear User,
   </p>
