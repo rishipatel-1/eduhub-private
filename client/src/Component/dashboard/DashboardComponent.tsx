@@ -48,10 +48,10 @@ const DashboardComponent: React.FC = () => {
     validate: (values: { title: string, description: string }) => {
       const errors: { title?: string, description?: string } = {}
       if (values.title === '') {
-        errors.title = 'Title is required'
+        errors.title = 'Title* is required'
       }
       if (values.description === '') {
-        errors.description = 'Description is required'
+        errors.description = 'Description* is required'
       }
       return errors
     },
@@ -110,13 +110,9 @@ const DashboardComponent: React.FC = () => {
     toggleSidebar()
   }
 
-  const handleGoBack = () => {
-    setShowDetails(false)
-    setSelectedCourse(null)
-  }
-
   const handleModal = () => {
     setShowDetails(false)
+    formik.resetForm()
   }
 
   const fetchCourses = async () => {

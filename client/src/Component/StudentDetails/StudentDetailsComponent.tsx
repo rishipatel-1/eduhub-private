@@ -7,12 +7,14 @@ import { getAllSubmission4, gradeSubmission } from '../../api/submission'
 import LoadingSpinner from '../Loader/LoadingSpinner'
 
 interface Course {
+  _id: string
   courseId: string
   courseName: string
   practicals: Practical[]
 }
 
 interface Practical {
+  _id: string
   practicalId: string
   practicalName: string
   status: string
@@ -24,26 +26,29 @@ const StudentDetailsComponent: React.FC = () => {
   const navigate = useNavigate()
   const { studentId } = useParams()
   const [loading, setLoading] = useState(false)
+  const [selectedCourseId, setSelectedCourseId] = useState<string>('')
   const [courses, setCourses] = useState<Course[]>([
     {
+      _id: '1',
       courseId: 'course1',
       courseName: 'Course 1',
       practicals: [
-        { practicalId: 'practical1', practicalName: 'Practical 1', status: 'Not Submitted', grade: null, isEditing: false, tempGrade: null },
-        { practicalId: 'practical2', practicalName: 'Practical 2', status: 'Submitted', grade: null, isEditing: false, tempGrade: null }
+        { _id: 'p1', practicalId: 'practical1', practicalName: 'Practical 1', status: 'Not Submitted', grade: null, isEditing: false, tempGrade: null },
+        { _id: 'p2', practicalId: 'practical2', practicalName: 'Practical 2', status: 'Submitted', grade: null, isEditing: false, tempGrade: null }
       ]
     },
     {
+      _id: '2',
       courseId: 'course2',
       courseName: 'Course 2',
       practicals: [
-        { practicalId: 'practical3', practicalName: 'Practical 3', status: 'Not Submitted', grade: null, isEditing: false, tempGrade: null },
-        { practicalId: 'practical4', practicalName: 'Practical 4', status: 'Not Submitted', grade: null, isEditing: false, tempGrade: null }
+        { _id: 'p1', practicalId: 'practical3', practicalName: 'Practical 3', status: 'Not Submitted', grade: null, isEditing: false, tempGrade: null },
+        { _id: 'p2', practicalId: 'practical4', practicalName: 'Practical 4', status: 'Not Submitted', grade: null, isEditing: false, tempGrade: null }
       ]
     }
   ])
-  const [submissions, setSubmissions] = useState<any[]>()
-  const [student, setStudent] = useState<{ name: string, email: string, stack: string } | null>(null)
+  const [submissions, setSubmissions] = useState<any[]>([])
+  const [student, setStudent] = useState<{ username: string, email: string, stack: string } | null>(null)
 
   const fetchAllSubmission = async () => {
     setLoading(true) // Set loading to true while fetching data
@@ -66,8 +71,15 @@ const StudentDetailsComponent: React.FC = () => {
           chapters
         }
       })
+      console.log('Data: ', subm)
+      const studentName = resp?.data?.student?.name
+      const studentEmail = resp?.data?.student?.email
+      const studentStack = resp?.data?.student?.stack
       setStudent(resp?.data?.student)
       setSubmissions(subm)
+      console.log('Student Name: ', studentName)
+      console.log('Student Email: ', studentEmail)
+      console.log('Student Stack: ', studentStack)
     } catch (err) {
       console.log('Error While Fetching Submissions: ', err)
     } finally {
@@ -80,16 +92,17 @@ const StudentDetailsComponent: React.FC = () => {
     })
   }, [])
   const handleGradeChange = (courseId: string, practicalId: string, grade: number) => {
-    setCourses((prevCourses) => {
-      const updatedCourses = prevCourses.map((course) => {
-        if (course.courseId === courseId) {
-          const updatedPracticals = course.practicals.map((practical) => {
-            if (practical.practicalId === practicalId) {
+    setSubmissions((prevCourses: any) => {
+      const updatedCourses = prevCourses.map((course: any) => {
+        if (course._id === courseId) {
+          const updatedPracticals = course.chapters.map((practical: any) => {
+            if (practical._id === practicalId) {
+              console.log('Practical Grade Change: ', grade)
               return { ...practical, tempGrade: grade }
             }
             return practical
           })
-          return { ...course, practicals: updatedPracticals }
+          return { ...course, chapters: updatedPracticals }
         }
         return course
       })
@@ -99,38 +112,34 @@ const StudentDetailsComponent: React.FC = () => {
   const toggleGradeEdit = (courseId: string, practicalId: string) => {
     setSubmissions((prevCourses: any) => {
       const updatedCourses = prevCourses.map((course: any) => {
-        if (course.courseId === courseId) {
+        if (course._id === courseId) {
           const updatedPracticals = course.chapters.map((practical: any) => {
             if (practical._id === practicalId) {
-              return { ...practical, isEditing: !practical.isEditing, tempGrade: null }
+              console.log('Setting True: ', practical)
+              return { ...practical, isEditing: !practical.isEditing, tempGrade: practical.grade !== null ? Number(practical.grade) : null }
             }
             return practical
           })
-          return { ...course, practicals: updatedPracticals }
+          return { ...course, chapters: updatedPracticals }
         }
         return course
       })
+      console.log('update edit: ', updatedCourses)
       return updatedCourses
     })
   }
 
-  const submitGrade = (courseId: string, practicalId: string, submissionId: string) => {
-    setCourses((prevCourses) => {
-      const updatedCourses = prevCourses.map((course) => {
-        if (course.courseId === courseId) {
-          const updatedPracticals = course.practicals.map((practical) => {
-            if (practical.practicalId === practicalId) {
-              const grade = practical.tempGrade !== null ? Math.max(0, Math.min(100, practical.tempGrade)) : null
-              return { ...practical, grade, status: grade !== null ? 'Submitted' : 'Not Submitted', isEditing: false }
-            }
-            return practical
-          })
-          return { ...course, practicals: updatedPracticals }
-        }
-        return course
-      })
-      return updatedCourses
-    })
+  const submitGrade = async (courseId: string, practicalId: string, submissionId: string) => {
+    try {
+      const submission = submissions?.find((sub: any) => sub._id === courseId)?.chapters.find((chap: any) => chap._id === practicalId)
+      if (submission) {
+        const grade = submission.tempGrade !== null ? Math.max(0, Math.min(100, submission.tempGrade)) : null
+        await gradeSubmission(submissionId, { grade })
+        void fetchAllSubmission()
+      }
+    } catch (error) {
+      console.log('Error While Grading Student', error)
+    }
   }
 
   return (
@@ -155,10 +164,28 @@ const StudentDetailsComponent: React.FC = () => {
           </button>
         </div>
         <h3>Student Details</h3>
-        <p>Name: {student?.name ? student?.name : 'Test User'}</p>
+        <p>Name: {student?.username ? student?.username : 'Test User'}</p>
         <p>Email: {student?.email}</p>
         <p>Stack: {student?.stack}</p>
-        <Table striped bordered className="mt-4 rounded-3">
+        <div>
+    <Form.Group controlId="courseSelect">
+      <Form.Label>Select Course:</Form.Label>
+      <Form.Control
+        as="select"
+        value={selectedCourseId}
+        onChange={(e) => setSelectedCourseId(e.target.value)}
+      >
+        <option value="">All Courses</option>
+        {submissions.map((course) => (
+          <option key={course._id} value={course._id} className="text-dark">
+            {course.title}
+          </option>
+        ))}
+      </Form.Control>
+    </Form.Group>
+  </div>
+<div className='table-div'>
+<Table striped bordered className="mt-4 rounded-3">
           <thead>
             <tr>
               <th>Course</th>
@@ -168,20 +195,23 @@ const StudentDetailsComponent: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {submissions && submissions?.map((course) =>
-              course.chapters.map((practical: any, index: number) => (
-                <tr key={practical._id}>
-                  {index === 0 && <td rowSpan={course.chapters.length}>{course.title}</td>}
-                  <td>{practical.practical}</td>
-                  <td>{practical.submissions.length > 0 ? practical.submissions[0]?.status : 'Not Submitted'}</td>
-                  <td>
-                    {practical.submissions.length > 0 && practical.submissions[0]?.status === 'Submitted' && !practical.isEditing ? (
-                      <div onClick={() => toggleGradeEdit(course._id, practical._id)}>
-                        {practical.submissions[0]?.grade !== null ? `Graded: ${practical.submissions[0]?.grade}` : 'Grade it'}
+          {submissions
+    .filter((course) => selectedCourseId === '' || course._id === selectedCourseId)
+    .map((course) =>
+      course.chapters.map((practical: any, index: number) => (
+        <tr key={practical._id}>
+                  {index === 0 && <td className='Course-col' rowSpan={course.chapters.length}>{course.title}</td>}
+                  <td className='Practical-col'>{practical.practical}</td>
+                  <td className='status-col'>{practical.submissions.length > 0 ? practical.submissions[0]?.status : 'Not Submitted'}</td>
+                  <td className='td-grade'>
+                    {practical.submissions.length > 0 && !practical.isEditing ? (
+                      <div onClick={() => { console.log('CLicked on grade Edit'); toggleGradeEdit(course._id, practical._id) }}>
+                        {(practical.submissions[0]?.grade !== null ? `Graded: ${practical.submissions[0]?.grade} %` : 'Grade it')}
                       </div>
                     ) : practical.isEditing ? (
-                      <Form.Group className="mb-0">
+                      <Form.Group className="mb-0 d-flex grade-div justify-content-center">
                         <Form.Control
+                        className='input-grade'
                           type="number"
                           placeholder="Enter grade"
                           value={practical.tempGrade !== null ? practical.tempGrade.toString() : ''}
@@ -191,7 +221,7 @@ const StudentDetailsComponent: React.FC = () => {
                           min={0}
                           max={100}
                         />
-                        <Button variant="primary" size="sm" onClick={() => submitGrade(course._id, practical._id, practical.submission[0]?._id)}>
+                        <Button variant="primary" className='grade-btn m-0' size="sm" onClick={async () => await submitGrade(course._id, practical._id, practical.submissions[0]?._id)}>
                           Submit
                         </Button>
                       </Form.Group>
@@ -203,7 +233,9 @@ const StudentDetailsComponent: React.FC = () => {
               ))
             )}
           </tbody>
+
         </Table>
+</div>
       </div>
     </div>
   </>

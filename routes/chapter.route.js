@@ -9,12 +9,15 @@ const {
 
 const router = express.Router();
 
-router.post("/addChapter/:courseId", addChapters);
+router.post("/addChapter/:courseId", addChapters); /** Add Chapters */
 
-router.put("/updateChapter/:chapterId", updateChapter);
+router.put("/updateChapter/:chapterId", updateChapter); /** update Chapter */
 
-router.delete("/deleteChapter/:chapterId", deleteChapter);
+router.delete("/deleteChapter/:chapterId", deleteChapter); /** Delete Chapter */
 
-router.get("/getChaptersForCourse/:courseId", getChapterByCourseId);
+router.get(
+  "/getChaptersForCourse/:courseId",
+  getChapterByCourseId
+); /** get Chapter for the course */
 
 module.exports = router;

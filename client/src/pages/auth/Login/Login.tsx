@@ -17,9 +17,11 @@ const Login: React.FC = () => {
   const navigator = useNavigate()
 
   const handleSubmit = (event: any) => {
+    console.log('clicked')
     event.preventDefault()
 
     login({ email, password, code }).then(async (resp: any) => {
+      console.log(resp)
       if (resp === null || resp === undefined) {
         toast.error('Invalid UserName or Password')
         return
@@ -38,6 +40,7 @@ const Login: React.FC = () => {
       } else if (user.role === 'student') {
         navigator('/Studentdashboard')
       }
+      console.log('Logged In if here')
     }).catch(err => {
       console.log('Error While Logging in: ', err)
     })
@@ -99,14 +102,14 @@ const Login: React.FC = () => {
                       onChange={(e) => { setPassword(e.target.value) }}
                       />
                   </div>
-                  <div className="input-box">
+                  {/* <div className="input-box">
                     <i className="fas fa-lock" />
                     <input
                       placeholder="Enter your code"
                       value={code}
                       onChange={(e) => { setCode(e.target.value) }}
                     />
-                  </div>
+                  </div> */}
                   <div className="text">
                     <Link to="/forgot-password">Forgot password?</Link>
                   </div>

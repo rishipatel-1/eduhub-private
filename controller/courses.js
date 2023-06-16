@@ -264,6 +264,186 @@ const AddStudentstoCourses = async (req, res) => {
   }
 };
 
+const updateStudentsEnrollment = async (req, res) => {
+  try {
+    const { studentEmail, stack, courseList } = req.body;
+
+    console.log("Student Enrollment: ", req.body);
+    const val_result = await validateToken(req.headers.authorization);
+
+    if (!val_result.valid || val_result.role !== "admin") {
+      res.status(401).json({
+        message: "Access Denied ",
+      });
+      return;
+    }
+
+    const course = await Courses.findOne({ _id: { $in: courseList } });
+
+    if (!course) {
+      res.status(500).json({ message: "Error Course does not exist" });
+      return;
+    }
+
+    // const student = await User.findOneAndUpdate(
+    //   { email: studentEmail },
+    //   {
+    //     $set: {
+    //       stack: stack,
+    //     },
+    //     $addToSet: { courses: { $each: courseList } },
+    //   },
+    //   { new: true }
+    // );
+
+    // const student = await User.findOne({
+    //   email: studentEmail,
+    // });
+    const student = await User.findOneAndUpdate(
+      { email: studentEmail },
+      {
+        $set: {
+          stack: stack,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    if (!student) {
+      res.status(500).json({ message: "Error While updating Student Stack" });
+      return;
+    }
+
+    // const uCourse = await Courses.findByIdAndUpdate(
+    //   req.params.courseId,
+    //   { $addToSet: { enrolled_students: student._id } },
+    //   { new: true }
+    // );
+
+    const denrollStudent = Courses.updateMany(
+      {},
+      { $pull: { enrolled_students: student._id } }
+    );
+
+    if (!denrollStudent) {
+      console.log("Error While Updating student Enrollment: ");
+      res
+        .status(500)
+        .json({ message: "Error While Updating Student Enrollment" });
+      return;
+    }
+
+    const ucourses = await Courses.updateMany(
+      { _id: { $in: courseList } },
+      {
+        $addToSet: { enrolled_students: student._id },
+      }
+    );
+
+    if (!ucourses) {
+      res
+        .status(500)
+        .json({ message: "Error While Enrolling Student for Course" });
+      return;
+    }
+    res
+      .status(200)
+      .json({ message: "Student Enrollment Successfull", course: ucourses });
+  } catch (err) {
+    console.log("Error While Enrolling Student for Course:\n", err);
+    res.status(500).json({
+      message: "Error While Enrolling Student for Course",
+      error: err,
+    });
+  }
+};
+
+const deleteStudentsEnrollments = async (req, res) => {
+  try {
+    const { studentEmail, stack, courseList } = req.body;
+
+    console.log("Student Enrollment: ", req.body);
+    const val_result = await validateToken(req.headers.authorization);
+
+    if (!val_result.valid || val_result.role !== "admin") {
+      res.status(401).json({
+        message: "Access Denied ",
+      });
+      return;
+    }
+
+    const course = await Courses.findOne({ _id: { $in: courseList } });
+
+    if (!course) {
+      res.status(500).json({ message: "Error Course does not exist" });
+      return;
+    }
+
+    // const student = await User.findOneAndUpdate(
+    //   { email: studentEmail },
+    //   {
+    //     $set: {
+    //       stack: stack,
+    //     },
+    //     $addToSet: { courses: { $each: courseList } },
+    //   },
+    //   { new: true }
+    // );
+
+    // const student = await User.findOne({
+    //   email: studentEmail,
+    // });
+    const student = await User.findOneAndUpdate(
+      { email: studentEmail },
+      {
+        $set: {
+          stack: stack,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    if (!student) {
+      res.status(500).json({ message: "Error While updating Student Stack" });
+      return;
+    }
+
+    // const uCourse = await Courses.findByIdAndUpdate(
+    //   req.params.courseId,
+    //   { $addToSet: { enrolled_students: student._id } },
+    //   { new: true }
+    // );
+
+    const denrollStudent = Courses.updateMany(
+      {},
+      { $pull: { enrolled_students: student._id } }
+    );
+
+    if (!denrollStudent) {
+      console.log("Error While Deleting student Enrollments: ");
+      res
+        .status(500)
+        .json({ message: "Error While Deleting Student Enrollments" });
+      return;
+    }
+
+    res.status(200).json({ message: "Student Enrollment Deleted Successfull" });
+  } catch (err) {
+    console.log(
+      "Error While deleting Enrollment for  Student for Course:\n",
+      err
+    );
+    res.status(500).json({
+      message: "Error While deleting Students Enrollment for Course",
+      error: err,
+    });
+  }
+};
+
 const removeEnrollment = async (req, res) => {
   try {
     const { studentId, courseId } = req.body;
@@ -277,15 +457,15 @@ const removeEnrollment = async (req, res) => {
       return;
     }
 
-    const student = await User.updateOne(
-      { _id: studentId },
-      { $pull: { enrolled_courses: courseId } }
-    );
+    // const student = await User.updateOne(
+    //   { _id: studentId },
+    //   { $pull: { enrolled_courses: courseId } }
+    // );
 
-    if (!student) {
-      res.status(500).json({ message: "Error While deleting Student Stack" });
-      return;
-    }
+    // if (!student) {
+    //   res.status(500).json({ message: "Error While deleting Student Stack" });
+    //   return;
+    // }
 
     const ucourses = await Courses.updateOne(
       { _id: courseId },
@@ -464,4 +644,6 @@ module.exports = {
   removeEnrollment,
   getCourseById,
   getCourseProgress,
+  deleteStudentsEnrollments,
+  updateStudentsEnrollment,
 };

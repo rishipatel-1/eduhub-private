@@ -14,6 +14,7 @@ import CourseProgress from './Component/Student/Courses'
 import Coursedetails from './Component/Course/Coursedetails'
 import UserDetailsComponent from './Component/StudentDetails/StudentDetailsComponent'
 import StudentCourse from './Component/Student/StudentCourse'
+import ErrorBoundary from './Component/ErrorBoundry/ErrorBoundry'
 
 function App () {
   return (
@@ -22,14 +23,14 @@ function App () {
         <Routes>
           <Route path="/email-verified" element={<EmailVerificationSuccess />} />
           <Route path='/login' element={<Login />} />
-          <Route path='/' element={<SharedLayout/>} >
-            <Route path='/AdminDashboard' Component={DashboardComponent} />
-            <Route path='/Studentdashboard' Component={StudentCourse} />
-            <Route path='/ShowCourseDetails/:courseId' Component={Coursedetails} />
-            <Route path='/manageEnrollment' Component={UserComponent} />
-            <Route path='/courses' Component={StudentCourse} />
-            <Route path='/courseProgress/:courseId' Component={CourseProgress} />
-            <Route path='/gradeStudent/:studentId' Component={UserDetailsComponent} />
+          <Route path='/' element={<ErrorBoundary><SharedLayout /></ErrorBoundary>}>
+            <Route path='/AdminDashboard' element={<ErrorBoundary><DashboardComponent /></ErrorBoundary>} />
+            <Route path='/Studentdashboard' element={<ErrorBoundary><StudentCourse /></ErrorBoundary>} />
+            <Route path='/ShowCourseDetails/:courseId' element={<ErrorBoundary><Coursedetails /></ErrorBoundary>} />
+            <Route path='/manageEnrollment' element={<ErrorBoundary><UserComponent /></ErrorBoundary>} />
+            <Route path='/courses' element={<ErrorBoundary><StudentCourse /></ErrorBoundary>} />
+            <Route path='/courseProgress/:courseId' element={<ErrorBoundary><CourseProgress /></ErrorBoundary>} />
+            <Route path='/gradeStudent/:studentId' element={<ErrorBoundary><UserDetailsComponent /></ErrorBoundary>} />
           </Route>
         </Routes>
       </div>

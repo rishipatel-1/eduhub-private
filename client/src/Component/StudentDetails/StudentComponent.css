@@ -18,11 +18,28 @@ h3 {
   z-index: 9999;
   background-color:aliceblue;
 }
-
+.input-search{
+  width: 350px;
+  margin-bottom: 15px;
+}
 .sidebar-open {
   right: 0; /* Moves the sidebar into the visible area */
 }
+.StudentTableDiv{
 
+  position: relative;
+}
+.pagination-buttons{
+  position: relative;
+  bottom: 2%;
+
+}
+.page-arrow:hover{
+background-color: rgb(125, 158, 196);
+}
+.actions-student{
+  min-width: 120px;
+}
 table {
   width: 100%;
   border-collapse: collapse;
@@ -192,4 +209,11 @@ button:hover {
 
 .content.blur {
   filter: blur(5px);
+}
+@media(max-width: 550px) {
+  .input-search{
+    width: 290px;
+    margin-bottom: 15px;
+  }
+  
 }

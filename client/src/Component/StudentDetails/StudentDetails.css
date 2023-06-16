@@ -18,6 +18,26 @@
   min-width: 210px !important;
   max-width: 210px !important;
 }
+.td-grade{
+  min-width: 300px;
+}
+.table-div{
+  overflow: auto;
+}
+.status-col{
+  min-width: 170px;
+}
+.Practical-col{
+  min-width:250px;
+}
+.Course-col{
+  min-width: 140px;
+}
+.grade-btn{
+  /* margin-top: 4px; */
+  position: relative;
+  right: 2.3%;
+}
 .loader-container {
   position: fixed;
   top: 0;
@@ -45,7 +65,12 @@
   z-index: 0;
   text-decoration: none;
 }
-
+.input-grade{
+  width: 70%;
+}
+.grade-div{
+  gap: 15px;
+}
 .submit-button {
   background-color: rgb(23, 196, 23);
   color: white;

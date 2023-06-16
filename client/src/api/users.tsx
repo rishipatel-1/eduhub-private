@@ -39,12 +39,14 @@ export const login = async (payload: any) => (
     })
 )
 
-export const getAllUsers = async () => (
-  await axiosInstance('/all-users', {
-    method: 'GET'
-  })
-    .then((resp) => resp)
-    .catch((err) => {
-      console.log(err)
+export const getAllUsers = async () => {
+  try {
+    const response = await axiosInstance('/all-users', {
+      method: 'GET'
     })
-)
+    return response.data
+  } catch (err) {
+    console.log(err)
+    return []
+  }
+}

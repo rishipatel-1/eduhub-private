@@ -23,13 +23,19 @@ router.post(
   "/uploadSubmission",
   upload.single("submission_file"),
   uploadSubmission
-);
+); /** upload zip file for sumbission */
 
-router.post("/submitChapter/:chapterId", AddSubmission);
+router.post(
+  "/submitChapter/:chapterId",
+  AddSubmission
+); /** Add And Update  Chapter */
 
 router.put("/updateSubmission/:submissionId", updateSubmission);
 
-router.put("/gradeSubmission/:submissionId", gradeSubmission);
+router.put(
+  "/gradeSubmission/:submissionId",
+  gradeSubmission
+); /** Grade Submission */
 
 router.delete("/deleteSubmission/:submissionId", deleteSubmission);
 
@@ -41,8 +47,14 @@ router.get("/getAllSubmission2", testgetSubmssision);
 
 router.get("/getAllSubmission3/:studentId", getAllSubmissions3);
 
-router.put("/deletezipsubmission", deleteSubmissionFile);
+router.put(
+  "/deletezipsubmission",
+  deleteSubmissionFile
+); /** Delete zip file for submission not currently used */
 
-router.get("/getAllSubmission4/:studentId", getAllSubmissions4);
+router.get(
+  "/getAllSubmission4/:studentId",
+  getAllSubmissions4
+); /** using to fetching all the submission for that student */
 
 module.exports = router;

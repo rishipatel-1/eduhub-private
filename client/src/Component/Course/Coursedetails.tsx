@@ -28,6 +28,7 @@ interface SubCategory {
 }
 
 const Coursedetails: React.FC = () => {
+  const formRef = useRef<HTMLFormElement | null>(null)
   const [subCategories, setSubCategories] = useState<SubCategory[]>([])
   const [subCategoryTitle, setSubCategoryTitle] = useState('')
   const [showDetails, setShowDetails] = useState(false)
@@ -45,6 +46,9 @@ const Coursedetails: React.FC = () => {
   const [base64String, setBase64String] = useState<string | null>(null)
   const [formErrors, setFormErrors] = useState({ subCategoryTitle: '', subCategoryDescription: '' })
 
+  const initialSubCategoryTitle = ''
+const initialSubCategoryDescription = ''
+const initialSubCategoryPractical = ''
   const fetchCourse = async () => {
     try {
       const resp: any = await getCourseById(courseId)
@@ -52,6 +56,8 @@ const Coursedetails: React.FC = () => {
         console.log('Error While Fetching Course: ', resp)
         return
       }
+
+      console.log('Course:', resp.data.course)
       setCourse(resp.data.course)
       fetchChapterForCourses(resp.data.course._id).catch((err) => {
         console.log('Error WHile Fetching Chapters: ', err)
@@ -114,6 +120,9 @@ const Coursedetails: React.FC = () => {
   const handleModal = () => {
     setShowDetails(false)
     setSelectedCourse(false)
+    setSubCategoryTitle(initialSubCategoryTitle)
+    setSubCategoryDescription(initialSubCategoryDescription)
+    setSubCategoryPractical(initialSubCategoryPractical)
   }
   const addSubCategory = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -264,7 +273,7 @@ const Coursedetails: React.FC = () => {
         <div className="col mb-4" key={index}>
           <Card className="h-100">
             <Card.Body className="p-4 w-auto">
-              <div className="d-flex flex-row flex-sm-row justify-content-sm-between">
+              <div className="d-flex flex-column justify-content-sm-between">
                 <Card.Title className="title">{subCategory.title}</Card.Title>
                 <div className="card-header-icons ms-auto ms-sm-0">
                   <Button
@@ -308,7 +317,7 @@ const Coursedetails: React.FC = () => {
             <div className="title-card">
               <h5 className="m-3">{selectedCourse ? 'Update Chapter' : 'Add Chapter'}</h5>
             </div>
-            <form onSubmit={addSubCategory} className="m-4">
+            <form onSubmit={addSubCategory} ref={formRef} className="m-4">
               <div className="form-group">
                 <label>Chapter Title</label>
                 <input

@@ -22,7 +22,7 @@
 }
 .img-fluid {
   width: 100%;
-  max-height: 300px;
+  height: 130px !important;
   object-fit: cover;
 }
 .sidebar-course {
