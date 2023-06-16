@@ -71,8 +71,8 @@ const Navbar = ({ isAdmin, children }: any) => {
               </div>
             </li>
           </ul> */}
-          <div className="sign-out-icon logoutIcon" style={{ height: '25px' }}>
-            <IoLogOutOutline className="icon float-end" />
+          <div className="sign-out-icon logoutIcon " style={{ height: '25px' }}>
+          <IoLogOutOutline className="icon float-end me-4 h-100 bg-light text-dark rounded-3" />
             <div className="logoutbox" onClick={handleSignout}>
               Sign out
             </div>
