@@ -52,25 +52,32 @@ const Navbar = ({ isAdmin, children }: any) => {
             onClick={toggleMenu}
           />
         )}
-        <div className="drop-item  fixed-bottom-dropdown mr-3">
-        <a
-  href="#"
-  className="d-flex align-items-center text-decoration-none dropdown-toggle text-white"
-  id="dropdownUser2"
-  data-bs-toggle="dropdown"
-  aria-expanded="false"
->
-  <div className="sign-out-icon text-white" style={{ height: '25px' }}>
-  <IoLogOutOutline className="icon"/>
-  </div>
-</a>
-          <ul className="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+        <div className='d-flex'>
+          {/* <a
+            href="#"
+            className="d-flex align-items-center text-decoration-none dropdown-toggle text-white signoutHover"
+            id="dropdownUser2"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <div className="sign-out-icon" style={{ height: '25px' }}>
+              <IoLogOutOutline className="icon" />
+            </div>
+          </a>
+          <ul className="dropdown-menu text-small shadow logout" aria-labelledby="dropdownUser2">
             <li>
               <div className="dropdown-item" onClick={handleSignout}>
                 Sign out
               </div>
             </li>
-          </ul>
+          </ul> */}
+          <div className="sign-out-icon logoutIcon" style={{ height: '25px' }}>
+            <IoLogOutOutline className="icon float-end" />
+            <div className="logoutbox" onClick={handleSignout}>
+              Sign out
+            </div>
+          </div>
+
         </div>
       </div>
       <div className="d-flex">
@@ -150,7 +157,7 @@ const Navbar = ({ isAdmin, children }: any) => {
           </div>
           <div className="content-area">
             {!isDashboardVisible &&
-            (
+              (
                 <p className="text-center">
                   {isAdmin === true
                     ? (
@@ -158,15 +165,15 @@ const Navbar = ({ isAdmin, children }: any) => {
                         Welcome Admin{' '}
                         <i className="fa fa-smile-o" aria-hidden="true"></i>
                       </>
-                      )
+                    )
                     : (
                       <>
                         Welcome Student{' '}
                         <i className="fa fa-smile-o" aria-hidden="true"></i>
                       </>
-                      )}
+                    )}
                 </p>
-            )}
+              )}
 
             {children}
           </div>

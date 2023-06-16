@@ -147,6 +147,14 @@ body {
 .nav__item span {
   font-size: 16px;
 }
+.dropdown:hover>.dropdown-menu {
+  display: block;
+}
+
+.dropdown>.dropdown-toggle:active {
+  /*Without this, clicking will make it sticky*/
+    pointer-events: none;
+}
 
 /* Media Query for Mobile Menu */
 @media only screen and (max-width: 767px) {
@@ -178,4 +186,19 @@ body {
   .nav {
     position: fixed;
   }
+}
+.logoutbox{
+  display: none;
+  margin: 20px 7px;
+    width: 5.5rem;
+    background: #ffffff;
+    color: black;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: black;
+    box-shadow: rgb(100 100 111 / 20%) 0px 7px 29px 0px;
+    cursor: pointer;
+}
+.logoutIcon:hover .logoutbox{
+  display: block;
 }
