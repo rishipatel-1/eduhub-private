@@ -7,7 +7,9 @@
   margin-bottom: 5px;
 }
 
-
+.courses-details{
+  min-height: 68vh;
+}
 
 .description {
   display: -webkit-box;

@@ -2,12 +2,12 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-confusing-void-expression */
 import React, { useState, useRef, useEffect, type ChangeEvent } from 'react'
-import { type Course } from '../dashboard/DashboardComponent'
 import './Coursedetails.css'
 import { Card, Button } from 'react-bootstrap'
 import { BsPencil, BsTrash } from 'react-icons/bs'
 import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
+import { AxiosResponse } from 'axios'
 import {
   addChapters,
   deleteChapter,
@@ -25,6 +25,12 @@ interface SubCategory {
   description: string
   practical: string
   image: string | null
+}
+interface DeleteResponse {
+  status: number
+  data: {
+    message: string
+  }
 }
 
 const Coursedetails: React.FC = () => {
@@ -51,7 +57,7 @@ const initialSubCategoryDescription = ''
 const initialSubCategoryPractical = ''
   const fetchCourse = async () => {
     try {
-      const resp: any = await getCourseById(courseId)
+      const resp = await getCourseById(courseId) as AxiosResponse<any, any>
       if (resp.status !== 200) {
         console.log('Error While Fetching Course: ', resp)
         return
@@ -73,10 +79,10 @@ const initialSubCategoryPractical = ''
       setShowDetails(false)
     }
   }
-  const fetchChapterForCourses = async (courseId: any) => {
+  const fetchChapterForCourses = async (courseId: string) => {
     try {
       setLoading(true)
-      const resp: any = await getChapterForCourse(courseId)
+      const resp = await getChapterForCourse(courseId) as AxiosResponse<any, any>
       if (resp.status !== 200) {
         console.log('Error While Fetching Course: ', resp)
         return
@@ -215,28 +221,27 @@ const initialSubCategoryPractical = ''
 
   const handleDelete = (index: number, chapterId: string) => {
     deleteChapter(chapterId)
-      .then(async (resp: any) => {
-        if (resp.status !== 200) {
+      .then(async (resp: DeleteResponse | void | AxiosResponse<any, any>) => {
+        if (resp && 'status' in resp && resp.status !== 200) {
           console.log('Error While deleting Chapter:', resp)
           return
         }
-        toast.success(resp.data.message)
+        if (resp && 'data' in resp) {
+          toast.success(resp.data.message)
+        }
         fetchChapterForCourses(course._id).catch((err) => {
-          console.log('Error WHile Fetching Chapters: ', err)
+          console.log('Error While Fetching Chapters: ', err)
         })
         console.log('Chapter deleted For Course:', resp)
       })
       .catch((err) => {
         console.log('Error While deleting Chapter: ', err)
       })
-
     setEditIndex(null)
-
     fetchChapterForCourses(course._id).catch((err) => {
-      console.log('Error WHile Fetching Chapters: ', err)
+      console.log('Error While Fetching Chapters: ', err)
     })
   }
-
   return (
     <>
       {loading && (
@@ -266,8 +271,10 @@ const initialSubCategoryPractical = ''
   </button>
 </div>
             <div className="row d-flex flex-column w-100">
-  <div className="subcategories">
-
+            <div className="subcategories">
+  {subCategories.length === 0 ? (
+    <div className='w-100 text-center m-4'><h4>No chapters added yet</h4></div>
+  ) : (
     <div className="row row-cols-1 row-cols-md-3 g-4">
       {subCategories.map((subCategory, index) => (
         <div className="col mb-4" key={index}>
@@ -294,7 +301,7 @@ const initialSubCategoryPractical = ''
                   </Button>
                 </div>
               </div>
-              <Card.Text className='mt-3 mb-3'>{subCategory.description}</Card.Text>
+              <Card.Text className="mt-3 mb-3">{subCategory.description}</Card.Text>
               <Card.Text>Practical: {subCategory.practical}</Card.Text>
               {subCategory.image != null && (
                 <img
@@ -308,7 +315,9 @@ const initialSubCategoryPractical = ''
         </div>
       ))}
     </div>
-  </div>
+  )}
+</div>
+
 </div>
           </div>
         </div>

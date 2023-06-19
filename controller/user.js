@@ -12,6 +12,7 @@ const {
 const { SendMail } = require("../utils/email");
 const speakeasy = require("speakeasy");
 const qrcode = require("qrcode");
+const { validateToken } = require("../utils/validatetoken");
 
 const getToken = async (req, res) => {
   const { email, password, code } = req.body;
@@ -135,7 +136,7 @@ const signup = async (req, res) => {
   res.status(200).json({ message: "User Created Verify Email to Proceed" });
 };
 
-const validateToken = async (req, res) => {
+const validateTokenExistToken = async (req, res) => {
   if (!req.query.token) {
     res.status(400).json({ message: "InValid Url" });
   }
@@ -256,11 +257,39 @@ const updateStack = async (uEmail, stack) => {
   }
 };
 
+const getAllStudents = async (req, res) => {
+  try {
+    const val_result = await validateToken(req.headers.authorization);
+    console.log("Val_result: ", val_result);
+    if (!val_result.valid || val_result.role !== "admin") {
+      res.status(401).json({
+        message: "Access Denied ",
+      });
+      return;
+    }
+
+    const users = await User.find({ user_role: "student" });
+
+    if (!users) {
+      console.log("Error While Reteriving Students ");
+      res.status(500).json({ message: "Error While Retreiving Students" });
+      return;
+    }
+    res.status(200).json({ message: "All Students", students: users });
+  } catch (err) {
+    console.log("Error While Fetching All Students: ", err);
+    res
+      .status(500)
+      .json({ message: "Error WHile Reteriving Students", error: err });
+  }
+};
+
 module.exports = {
   getToken,
   signup,
-  validateToken,
+  validateTokenExistToken,
   verifyEmail,
   getAllUsers,
   updateStack,
+  getAllStudents,
 };

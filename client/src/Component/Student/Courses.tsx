@@ -8,6 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { getCourseProgress } from '../../api/courses'
 import { submitChapter, uploadSubmission } from '../../api/submission'
 import { toast } from 'react-hot-toast'
+import LoadingSpinner from '../Loader/LoadingSpinner'
 
 interface Chapter {
   id: number
@@ -24,35 +25,43 @@ interface CourseDetailsProps {
   }
   onBack: () => void
 }
+interface Course {
+  _id: string
+  createdBy: string
+  description: string
+  image: string
+  isEditing: boolean
+  practical: string
+  submissions: Submission[]
+  tempGrade: null
+  title: string
+  __v: number
+}
+
+interface Submission {
+  chapter: string
+  grade: number
+  gradedBy: string
+  status: string
+  student: string
+  submission: string
+  __v: number
+  _id: string
+}
 
 const CourseProgress: React.FC = () => {
-  // const [practicalSubmissions, setPracticalSubmissions] = useState<string[]>(
-  //   []
-  // )
   const [gradesVisible, setGradesVisible] = useState(false)
   const [course, setCourse] = useState<any>({})
-  const [chapters, setChapters] = useState<any>([])
+  const [chapters, setChapters] = useState<string[]>([])
+  const [loading, setLoading] = useState(false)
   const [submissionFiles, setSubmissionFiles] = useState<any>([])
   const [submission, setSubmission] = useState<any>([])
   const { courseId } = useParams()
   const navigator = useNavigate()
-  const fileInputRefs = useRef<any[]>([])
-  // const handlePracticalSubmit = (chapterId: number, submission: string) => {
-  //   const updatedSubmissions = [...practicalSubmissions]
-  //   updatedSubmissions[chapterId - 1] = submission
-  //   setPracticalSubmissions(updatedSubmissions)
-  // }
 
   const handleShowGrades = () => {
     setGradesVisible(true)
   }
-
-  // const onDrop = useCallback((acceptedFiles: any) => {
-  //   console.log('Selected Files: ', acceptedFiles)
-  //   console.log('Call the upload Zip file function from here ')
-  // }, [])
-
-  const { getRootProps, getInputProps } = useDropzone({})
 
   const uploadZipSubmission = (chapterId: string, file: File | null) => {
     try {
@@ -101,6 +110,7 @@ const CourseProgress: React.FC = () => {
 
   const fetchCourseProgress = async () => {
     try {
+      setLoading(true)
       const resp: any = await getCourseProgress(courseId)
       if (resp.status !== 200) {
         console.log('Error While Fetching Course: ', resp)
@@ -121,6 +131,8 @@ const CourseProgress: React.FC = () => {
       setSubmission(resp.data.submission)
     } catch (err) {
       console.log('Error While Fetching Course Details: ', err)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -147,44 +159,58 @@ const CourseProgress: React.FC = () => {
   }, [])
 
   return (
-    <div className="container-mained">
+    <>
+          {loading && (
+        <div className="loader-container">
+          <div className="text-center">
+            <LoadingSpinner/>
+          </div>
+        </div>
+      )}
+      <div className={`content ${loading ? 'blur' : ''}`}>
+<div className="container-mained">
   <div className="course-details">
-  <button className="back-button" onClick={() => { navigator('/courses') }}>
+    <button className="back-button" onClick={() => { navigator('/courses') }}>
       Back
     </button>
     <h2 className="course-title">{course.title}</h2>
     <p className="course-description">{course.description}</p>
 
-    <div className="chapter-container">
-      {chapters.map((chapter: any, index: number) => (
-        <div className="chapter-card" key={chapter._id}>
-          <h3 className="chapter-title">{chapter.title}</h3>
-          <h5 className='mt-4 chapter-description mb-4'>{chapter.description}</h5>
-          <p className="chapter-practical">{chapter.practical}</p>
-          <div className="dropzone">
-          <Dropzone onDrop={(acceptedFiles) => { uploadZipSubmission(chapter._id, acceptedFiles[0]) }}>
-  {({ getRootProps, getInputProps, isDragActive, acceptedFiles }) => (
-    <div className={`dropzonee ${isDragActive ? 'active' : ''}`} {...getRootProps()}>
-      <input {...getInputProps()} />
-      {acceptedFiles.length === 0 ? (
-        <p>Drag and Drop a file here, or click to select a file</p>
-      ) : (
-        <p>Selected file: {acceptedFiles[0].name}</p>
-      )}
-    </div>
-  )}
-</Dropzone>
-          </div>
+    {chapters.length === 0 ? (
+      <p className="no-chapters-message text-center">Chapters Not Added Yet</p>
+    ) : (
+      <div className="chapter-container">
+        {chapters.map((chapter: any, index: number) => (
+          <div className="chapter-card" key={chapter._id}>
+            <h3 className="chapter-title">{chapter.title}</h3>
+            <h5 className="mt-4 chapter-description mb-4">{chapter.description}</h5>
+            <p className="chapter-practical">{chapter.practical}</p>
+            <div className="dropzone">
+              <Dropzone onDrop={(acceptedFiles) => { uploadZipSubmission(chapter._id, acceptedFiles[0]) }}>
+                {({ getRootProps, getInputProps, isDragActive, acceptedFiles }) => (
+                  <div className={`dropzonee ${isDragActive ? 'active' : ''}`} {...getRootProps()}>
+                    <input {...getInputProps()} />
+                    {acceptedFiles.length === 0 ? (
+                      <p>Drag and Drop a file here, or click to select a file</p>
+                    ) : (
+                      <p>Selected file: {acceptedFiles[0].name}</p>
+                    )}
+                  </div>
+                )}
+              </Dropzone>
+            </div>
 
-          <button className="mt-3 m-0 p-2" onClick={() => { submitPractical(chapter._id) }}>Submit</button>
-        </div>
-      ))}
-    </div>
-    <div className={`grade-section ${gradesVisible ? 'show' : ''}`}>
+            <button className="mt-3 m-0 p-2" onClick={() => { submitPractical(chapter._id) }}>Submit</button>
+          </div>
+        ))}
+      </div>
+    )}
+
+    <div className={`grade-section ${gradesVisible ? 'd-block' : ''}`}>
       {submission.map((sub: any) => (
-        <div className="grade-item" key={sub.chapter._id}>
-          <h4 className="grade-title">{sub.chapter.title} Grade:</h4>
-          <p className="grade-value">{sub.grade !== undefined ? sub.grade : 'No Grade Yet'}</p>
+        <div className="grade-item d-flex flex-sm-row" key={sub.chapter._id}>
+          <h4 className="grade-title m-3">{sub.chapter.title}</h4>
+          <h5 className="grade-value ms-3 m-3">--- Grade :{sub.grade !== undefined ? sub.grade : 'No Grade Yet'}%</h5>
         </div>
       ))}
     </div>
@@ -194,7 +220,8 @@ const CourseProgress: React.FC = () => {
     </button>
   </div>
 </div>
-
+</div>
+</>
   )
 }
 

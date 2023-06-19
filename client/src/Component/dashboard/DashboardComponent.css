@@ -10,6 +10,7 @@
 .row {
   margin-top: 1rem;
 }
+
 .loader-container {
   position: fixed;
   top: 0;
@@ -84,6 +85,13 @@
 @media(max-width:500px) {
   .sidebar{
     width: 20rem;
+  }
+  
+}
+@media(max-width:500px) {
+  .charts{
+width: 300px !important;
+height: 200px !important;
   }
   
 }

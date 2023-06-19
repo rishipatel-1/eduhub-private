@@ -37,6 +37,15 @@ export const enrollmultiplecourses = async (payload: any) => (
   })
 )
 
+export const updateEnrollment = async (payload: any) => (
+  await axiosInstance('/updateEnrollments/', {
+    method: 'PUT',
+    data: payload
+  }).then((resp) => resp).catch((err) => {
+    console.log(err)
+  })
+)
+
 export const deleteCourse = async (courseId: string) => (
   await axiosInstance(`/deleteCourse/${courseId}`, {
     method: 'DELETE'
@@ -70,6 +79,15 @@ export const removeEnrollment = async (payload: any) => (
   })
 )
 
+export const removeEnrollments = async (payload: any) => (
+  await axiosInstance('/deleteEnrollments', {
+    method: 'PUT',
+    data: payload
+  }).then((resp) => resp).catch((err) => {
+    console.log(err)
+  })
+)
+
 export const getCourseById = async (payload: any) => (
   await axiosInstance(`/getCourseById/${payload}`, {
     method: 'GET'
@@ -80,6 +98,14 @@ export const getCourseById = async (payload: any) => (
 
 export const getCourseProgress = async (payload: any) => (
   await axiosInstance(`/getCourseProgress/${payload}`, {
+    method: 'GET'
+  }).then((resp) => resp).catch((err) => {
+    console.log(err)
+  })
+)
+
+export const getAllCoursesAndStudents = async () => (
+  await axiosInstance('/getAllStudentAndCourses/', {
     method: 'GET'
   }).then((resp) => resp).catch((err) => {
     console.log(err)

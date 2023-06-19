@@ -1,14 +1,7 @@
 {
   "main": "index.js",
-  "engines": {
-    "node": "16.0.0"
-  },
   "scripts": {
-    "client-build": "cd client && yarn build",
-    "install-client": "cd client && yarn install",
-    "postbuild": "yarn install",
-    "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "nodemon index.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
