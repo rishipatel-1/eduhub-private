@@ -25,8 +25,6 @@ const StudentCourse: React.FC = () => {
         console.log('Error While Fetching Course: ', resp)
         return
       }
-
-      console.log('Course:', resp.data.courses)
       setCourses(resp.data.courses)
     } catch (err) {
       console.log('Error While Fetching Course Details: ', err)

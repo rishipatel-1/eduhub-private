@@ -164,7 +164,24 @@ button:hover {
 .modal-header {
   border-bottom: none;
 }
-
+@media(max-width:500px) {
+  .sidebar{
+    width: 25rem;
+  }
+  
+}
+@media(max-width:400px) {
+  .sidebar{
+    width: 20rem;
+  }
+  
+}
+@media(max-width:350px) {
+  .sidebar{
+    width: 15rem;
+  }
+  
+}
 .modal-title {
   font-size: 20px;
   font-weight: bold;

@@ -81,8 +81,6 @@ export const uploadSubmission = async (payload: any) => {
 
     const response = await axiosInstance.post('/uploadSubmission', payload)
     axiosInstance.defaults.headers['Content-Type'] = 'application/json'
-
-    console.log('FrontEnd Response:', response)
     return response
   } catch (error) {
     console.log('Error While Uploading File:', error)

@@ -13,10 +13,6 @@ const Register: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    console.log('Name:', name)
-    console.log('Email:', email)
-    console.log('Password:', password)
-
     const payload = {
       email,
       username: name,
@@ -32,7 +28,6 @@ const Register: React.FC = () => {
       if (response.status !== 200) {
         console.log('Error While Signup: ', response)
       }
-      console.log('Signup successful:', response)
       navigator('/login')
       toast.success(response.data.message)
     })

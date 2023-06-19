@@ -51,7 +51,7 @@ interface newStudent {
 //   _id: string
 //   title: string
 // }
- export interface Course {
+export interface Course {
   _id: string
   title: string
   description: string
@@ -123,10 +123,8 @@ const UserComponent: React.FC = () => {
     try {
       const resp = await getAllUsers() as AxiosResponse
       if (resp.status !== 200) {
-        console.log('Error While Fetching All Users:', resp)
         return
       }
-      console.log('All Users:', resp.data.users)
       setStudents(resp.data.users)
     } catch (err) {
       console.log('Error While Fetching All Users:', err)
@@ -148,7 +146,6 @@ const UserComponent: React.FC = () => {
         console.log('Error While Fetching All Users:', resp)
         return
       }
-      console.log('All Data:', resp.data.enroll_data)
 
       const usedata = resp.data.enroll_data.map((stud: Student) => {
         const coursesnames = stud.enrolled_courses.map((cour: Course) => (cour.title)).join(',')
@@ -157,8 +154,6 @@ const UserComponent: React.FC = () => {
       })
 
       setData(usedata)
-
-      console.log('final Data to be used: ', usedata)
     } catch (err) {
       console.log('Error While Fetching Data:', err)
     }
@@ -178,7 +173,6 @@ const UserComponent: React.FC = () => {
           return
         }
         setCourses(resp.data.courses)
-        console.log('All Courses:', resp.data.courses)
       } catch (err) {
         console.log('Error While Fetching All Courses:', err)
       }
@@ -206,7 +200,6 @@ const UserComponent: React.FC = () => {
   const handleSaveStudent = async () => {
     setLoading(true) // Set loading state to true
     try {
-      console.log('enroll_student:', newStudent)
       const resp = await enrollmultiplecourses({
         studentEmail: newStudent.email,
         stack: newStudent.stack,
@@ -234,7 +227,6 @@ const UserComponent: React.FC = () => {
       })
       try {
         const dinnnnn = await fetchNewData()
-        console.log(dinnnnn, 'dipak')
       } catch (err) {
         console.log('Error:', err)
       }
@@ -284,7 +276,6 @@ const UserComponent: React.FC = () => {
         return
       }
       toast.success(resp.data.message)
-      console.log('Student Enrollment Deleted:', resp.data)
       fetchAllUsers()
     } catch (err) {
       console.log('Error While Deleting Students Enrollment:', err)
@@ -312,7 +303,6 @@ const UserComponent: React.FC = () => {
     const selectedCourses = selectedOptions.map((option) => option.value)
     setNewStudent((prevStudent: Student) => ({ ...prevStudent, courseslist: selectedCourses }))
   }
-  console.log(Math.ceil(courses.length / itemsPerPage))
   const handleEditCourseChange = (
     selectedOptions: MultiValue<{ value: string, label: string }>,
     actionMeta: ActionMeta<{ value: string, label: string }>
@@ -320,7 +310,6 @@ const UserComponent: React.FC = () => {
     const selectedCourses = selectedOptions.map((option) => option.value)
     setSelectedStudent((prevStudent: Student) => ({ ...prevStudent, courseslist: selectedCourses }))
   }
-  console.log('Courses:', courses)
   const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     if (name === 'courseslist') {
@@ -353,22 +342,22 @@ const UserComponent: React.FC = () => {
         </div>
       )}
       <div className={`content ${loading ? 'blur' : ''}`}>
-      <Modal show={showConfirmationModal} onHide={handleCloseModal} centered>
-  <Modal.Header closeButton>
-    <Modal.Title>Confirmation</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    Are you sure you want to delete this student enrollment?
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={handleCloseModal}>
-      Cancel
-    </Button>
-    <Button variant="danger" onClick={confirmDeleteStudent}>
-      Delete
-    </Button>
-  </Modal.Footer>
-</Modal>
+        <Modal show={showConfirmationModal} onHide={handleCloseModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmation</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Are you sure you want to delete this student enrollment?
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseModal}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={confirmDeleteStudent}>
+              Delete
+            </Button>
+          </Modal.Footer>
+        </Modal>
         <div className="container StudentTableDiv">
           <div className="container-fluid w-100">
             <div className="col-auto p-0">
@@ -422,31 +411,24 @@ const UserComponent: React.FC = () => {
                     <td>{student.coursesnames}</td>
                     <td className='actions-student'>
                       <div className="icon-container">
-                        <OverlayTrigger placement="top" overlay={renderTooltip('Edit')}>
-                          <BsPencil
-                            className="icon m-1"
-                            onClick={() => {
-                              console.log('Selected Student:', student)
-                              handleEditModalOpen(student)
-                            }}
-                          />
-                        </OverlayTrigger>
-                        <OverlayTrigger placement="top" overlay={renderTooltip('Delete')}>
-  <BsTrash
-    className="icon m-1"
-    onClick={() => {
-      handleDeleteStudent(student)
-    }}
-  />
-</OverlayTrigger>
-                        <OverlayTrigger placement="top" overlay={renderTooltip('Grade')}>
-                          <BsEyeFill
-                            className="icon m-1"
-                            onClick={() => {
-                              handleViewGrades(student._id)
-                            }}
-                          />
-                        </OverlayTrigger>
+                        <BsPencil
+                          className="icon m-1"
+                          onClick={() => {
+                            handleEditModalOpen(student)
+                          }}
+                        />
+                        <BsTrash
+                          className="icon m-1"
+                          onClick={() => {
+                            handleDeleteStudent(student)
+                          }}
+                        />
+                        <BsEyeFill
+                          className="icon m-1"
+                          onClick={() => {
+                            handleViewGrades(student._id)
+                          }}
+                        />
                       </div>
 
                     </td>

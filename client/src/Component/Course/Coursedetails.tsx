@@ -62,8 +62,6 @@ const initialSubCategoryPractical = ''
         console.log('Error While Fetching Course: ', resp)
         return
       }
-
-      console.log('Course:', resp.data.course)
       setCourse(resp.data.course)
       fetchChapterForCourses(resp.data.course._id).catch((err) => {
         console.log('Error WHile Fetching Chapters: ', err)
@@ -87,7 +85,6 @@ const initialSubCategoryPractical = ''
         console.log('Error While Fetching Course: ', resp)
         return
       }
-      console.log('Chapters:', resp.data.chapters)
       setSubCategories(resp.data.chapters)
     } catch (err) {
       console.log('Error While Fetching Course: ', err)
@@ -132,8 +129,6 @@ const initialSubCategoryPractical = ''
   }
   const addSubCategory = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    console.log('What: ', imageFile)
     const reader = new FileReader()
 
     if (editIndex !== null) {
@@ -143,9 +138,6 @@ const initialSubCategoryPractical = ''
         practical: subCategoryPractical,
         image: base64String
       }
-
-      console.log('ChapterId: ', chapterId)
-
       updateChapters(chapterId, chapter)
         .then(async (resp: any) => {
           if (resp.status !== 200) {
@@ -157,7 +149,6 @@ const initialSubCategoryPractical = ''
           fetchChapterForCourses(course._id).catch((err) => {
             console.log('Error WHile Fetching Chapters: ', err)
           })
-          console.log('Chapter updated For Course:', resp)
         })
         .catch((err) => {
           console.log('Error While updating Chapter: ', err)
@@ -184,7 +175,6 @@ const initialSubCategoryPractical = ''
           fetchChapterForCourses(course._id).catch((err) => {
             console.log('Error WHile Fetching Chapters: ', err)
           })
-          console.log('Chapter Added For Course:', resp)
         })
         .catch((err) => {
           console.log('Error While Adding Chapter: ', err)
@@ -214,8 +204,6 @@ const initialSubCategoryPractical = ''
     setBase64String(subCategoryToEdit.image)
     setchapterId(cchapterId)
     setEditIndex(index)
-    console.log('Passed: ', cchapterId)
-    console.log('ChapterId: ', chapterId)
     setShowDetails(true)
   }
 
@@ -232,7 +220,6 @@ const initialSubCategoryPractical = ''
         fetchChapterForCourses(course._id).catch((err) => {
           console.log('Error While Fetching Chapters: ', err)
         })
-        console.log('Chapter deleted For Course:', resp)
       })
       .catch((err) => {
         console.log('Error While deleting Chapter: ', err)

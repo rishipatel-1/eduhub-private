@@ -74,7 +74,6 @@ const CourseProgress: React.FC = () => {
           .then((resp: any) => {
             if (resp && resp.status === 200) {
               const fileLink = resp.data.upload_location
-              console.log('response.data.lcoation: ', fileLink)
               setSubmissionFiles((prevSubmissionFiles: any[]) => {
                 const existingSubmissionFile = prevSubmissionFiles.find((submissionFile) => submissionFile.chapterId === chapterId)
                 if (existingSubmissionFile) {
@@ -90,11 +89,8 @@ const CourseProgress: React.FC = () => {
                   return [...prevSubmissionFiles, newSubmissionFile]
                 }
               })
-
-              console.log('File uploaded successfully: ', submissionFiles)
             } else {
               console.log('Error While Uploading file')
-              console.log('Response: ', resp)
             }
           })
           .catch((err) => {
@@ -116,15 +112,10 @@ const CourseProgress: React.FC = () => {
         console.log('Error While Fetching Course: ', resp)
         return
       }
-
-      console.log('Course:', resp.data.course)
-      console.log('chapters: ', resp.data.chapters)
-      console.log('Submission: ', resp.data.submission)
       const updatedSubmissionFiles = resp.data.submission.map((sub: any) => ({
         chapterId: sub.chapter._id,
         fileLink: sub.submission ? sub.submission : ''
       }))
-      console.log('Submissions file: ', updatedSubmissionFiles)
       setSubmissionFiles(updatedSubmissionFiles)
       setCourse(resp.data.course)
       setChapters(resp.data.chapters)
@@ -140,15 +131,12 @@ const CourseProgress: React.FC = () => {
     const submissionFile = submissionFiles.find((file: any) => file.chapterId === chapterId)
     const fileLink = submissionFile ? submissionFile.fileLink : ''
 
-    console.log('File Url Link Updation: ', fileLink)
-
     submitChapter(chapterId, { fileUrl: fileLink }).then((resp: any) => {
       if (resp.status !== 200) {
         console.log('Error While Submitting Practical: ', resp)
         return
       }
       toast.success(resp.data.message)
-      console.log('Practical Sumbitted Succesffully', resp)
     }).catch(err => {
       console.log('Error While Submitting Practical: ', err)
     })

@@ -16,8 +16,6 @@ const EmailVerificationSuccess: React.FC = () => {
 
   const redirectUser = async () => {
     const decoded: any = await jwt(token)
-    console.log('decoded:', decoded)
-    console.log('Decoded: ', decoded?.role)
     seturole(decoded.role)
   }
 

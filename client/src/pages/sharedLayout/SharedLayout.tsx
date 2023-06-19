@@ -10,7 +10,6 @@ const SharedLayout = () => {
   const navigator = useNavigate()
 
   useEffect(() => {
-    console.log('Checking ', decoded)
     if (!decoded.role) {
       navigator('/login')
     }

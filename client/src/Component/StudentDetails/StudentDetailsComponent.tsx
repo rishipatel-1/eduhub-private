@@ -69,15 +69,11 @@ const StudentDetailsComponent: React.FC = () => {
           chapters
         }
       })
-      console.log('Data: ', subm)
       const studentName = resp?.data?.student?.name
       const studentEmail = resp?.data?.student?.email
       const studentStack = resp?.data?.student?.stack
       setStudent(resp?.data?.student)
       setSubmissions(subm)
-      console.log('Student Name: ', studentName)
-      console.log('Student Email: ', studentEmail)
-      console.log('Student Stack: ', studentStack)
     } catch (err) {
       console.log('Error While Fetching Submissions: ', err)
     } finally {
@@ -97,7 +93,6 @@ const StudentDetailsComponent: React.FC = () => {
         if (course._id === courseId) {
           const updatedPracticals = course.chapters.map(practical => {
             if (practical._id === practicalId) {
-              console.log('Practical Grade Change: ', grade)
               return { ...practical, tempGrade: grade }
             }
             return practical
@@ -116,7 +111,6 @@ const StudentDetailsComponent: React.FC = () => {
         if (course._id === courseId) {
           const updatedPracticals = course.chapters.map(practical => {
             if (practical._id === practicalId) {
-              console.log('Setting True: ', practical)
               return { ...practical, isEditing: !practical.isEditing, tempGrade: practical.grade !== null ? Number(practical.grade) : null }
             }
             return practical
@@ -125,7 +119,6 @@ const StudentDetailsComponent: React.FC = () => {
         }
         return course
       })
-      console.log('update edit: ', updatedCourses)
       return updatedCourses
     })
   }
@@ -206,7 +199,7 @@ const StudentDetailsComponent: React.FC = () => {
                         <td className='status-col'>{practical.submissions.length > 0 ? practical.submissions[0]?.status : 'Not Submitted'}</td>
                         <td className='td-grade'>
                           {practical.submissions.length > 0 && !practical.isEditing ? (
-                            <div onClick={() => { console.log('Clicked on grade Edit'); toggleGradeEdit(course._id, practical._id) }}>
+                            <div onClick={() => { toggleGradeEdit(course._id, practical._id) }}>
                               {(practical.submissions[0]?.grade !== null ? `Graded: ${practical.submissions[0]?.grade} %` : 'Grade it')}
                             </div>
                           ) : practical.isEditing ? (

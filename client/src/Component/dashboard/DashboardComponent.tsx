@@ -86,7 +86,6 @@ const DashboardComponent: React.FC = () => {
             return
           }
           toast.success(resp.data.message)
-          console.log('Course Updated:', resp)
         } catch (err) {
           console.log('Error While Updating Course: ', err)
         }
@@ -98,7 +97,6 @@ const DashboardComponent: React.FC = () => {
             return
           }
           toast.success(resp.data.message)
-          console.log('Course Created:', resp)
         } catch (err) {
           console.log('Error While Adding Course:', err)
         }
@@ -137,7 +135,6 @@ const DashboardComponent: React.FC = () => {
         console.log('Error While Fetching Course: ', resp)
         return
       }
-      console.log('Courses:', resp.data.courses)
       setFetchedCourse(resp.data.courses)
       setStudentData([
         { label: 'Total Students', data: resp.data.totalStudents }
