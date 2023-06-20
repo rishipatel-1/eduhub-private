@@ -86,7 +86,7 @@ const UserComponent: React.FC = () => {
   const [data, setData] = useState([])
   const [showConfirmationModal, setShowConfirmationModal] = useState(false)
   const [selectedStudentToDelete, setSelectedStudentToDelete] = useState<Student | null>(null)
-  const itemsPerPage = 5
+  const itemsPerPage = 8
   const [currentPage, setCurrentPage] = useState(1)
 
   const handleNextPage = () => {
@@ -260,6 +260,7 @@ const UserComponent: React.FC = () => {
       setStudents(updatedStudents)
       setSelectedStudent(false)
       setIsEditModalOpen(false)
+      fetchNewData()
     }
   }
   const handleDeleteStudent = (student: Student) => {
@@ -280,8 +281,8 @@ const UserComponent: React.FC = () => {
     } catch (err) {
       console.log('Error While Deleting Students Enrollment:', err)
     }
-    fetchNewData()
     setShowConfirmationModal(false)
+    fetchNewData()
   }
   const handleCloseModal = () => {
     setShowConfirmationModal(false)
@@ -399,7 +400,7 @@ const UserComponent: React.FC = () => {
               </thead>
               <tbody>
                 {paginatedCourses && paginatedCourses.filter((student: Student) =>
-                  (student.name && student.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                  (student.username && student.username.toLowerCase().includes(searchQuery.toLowerCase())) ||
                   (student.stack && student.stack.toLowerCase().includes(searchQuery.toLowerCase())) ||
                   (student.email && student.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
                   (student.coursesnames && student.coursesnames.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -452,7 +453,7 @@ const UserComponent: React.FC = () => {
             <button
               className='page-arrow m-2'
               onClick={handleNextPage}
-              disabled={currentPage >= (Math.ceil(courses.length / itemsPerPage)) - 2}
+              disabled={currentPage >= (Math.ceil(courses.length / itemsPerPage))}
             >
               <BsArrowRight className="icon text-dark" />
             </button>

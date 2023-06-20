@@ -107,18 +107,6 @@ const Navbar = ({ isAdmin, children }: NavbarProps) => {
                     <i className="fa fa-users" aria-hidden="true"></i>
                     <span>Manage Students</span>
                   </Link>
-                  <Link
-                    className="nav__item"
-                    role="button"
-                    to="/all-students"
-                    style={{
-                      textDecoration: 'none',
-                      color: 'white'
-                    }}
-                  >
-                    <i className="fa fa-user" aria-hidden="true"></i>
-                    <span>Student Info</span>
-                  </Link>
                 </>
               )}
 

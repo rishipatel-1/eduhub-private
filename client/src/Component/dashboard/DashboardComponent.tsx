@@ -174,7 +174,7 @@ const DashboardComponent: React.FC = () => {
             <div className="row mt-4">
               <div className="col-md-6 chart">
                 <BarChart width={250} height={300} data={studentData}>
-                  <Bar dataKey="data" fill="rgba(54, 162, 235, 0.6)"/>
+                  <Bar dataKey="data" fill="rgba(54, 162, 235, 0.6)" />
                   <XAxis dataKey="label" />
                   <YAxis />
                   <Tooltip />
@@ -255,9 +255,8 @@ const DashboardComponent: React.FC = () => {
         </div>
         <ErrorBoundary>
           <div
-            className={`sidebar ${showDetails ? 'sidebar-open' : ''} ${
-              loading ? 'd-none' : ''
-            }`}
+            className={`sidebar ${showDetails ? 'sidebar-open' : ''} ${loading ? 'd-none' : ''
+              }`}
           >
             <div className="row mt-4 m-4">
               <div className="col-md-12">

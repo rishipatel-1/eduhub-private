@@ -103,13 +103,6 @@ const signup = async (req, res) => {
   <p>Please verify your email address by clicking on the following link: <a href="${verificationLink}">Click Here</a></p>`;
   console.log("Verification LInk:", verificationLink);
 
-  // send email here
-  // const sendEmail =
-  // if (sendEmail !== 200) {
-  //res.status(500).json({ error: "Error while Sending Email" });
-  //return;
-  //}
-
   const sendEmail = await SendMail(email, "Verify your Email Address", htmlmsg);
   console.log("Send Email:", sendEmail);
   if (sendEmail !== 200) {

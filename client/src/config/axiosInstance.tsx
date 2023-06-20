@@ -5,7 +5,7 @@ import toast from 'react-hot-toast'
 import { getCookie } from 'react-use-cookie'
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3010',
+  baseURL: '/',
   headers: {
     'Content-Type': 'application/json'
   }

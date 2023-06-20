@@ -14,7 +14,6 @@ import CourseProgress from './Component/Student/Courses'
 import Coursedetails from './Component/Course/Coursedetails'
 import UserDetailsComponent from './Component/StudentDetails/StudentDetailsComponent'
 import StudentCourse from './Component/Student/StudentCourse'
-import TotalStudent from './Component/TotalStudentInformation/TotalStudent'
 import ErrorBoundary from './Component/ErrorBoundry/ErrorBoundry'
 
 function App () {
@@ -30,7 +29,6 @@ function App () {
             <Route path='/ShowCourseDetails/:courseId' element={<ErrorBoundary><Coursedetails /></ErrorBoundary>} />
             <Route path='/manageEnrollment' element={<ErrorBoundary><UserComponent /></ErrorBoundary>} />
             <Route path='/courses' element={<ErrorBoundary><StudentCourse /></ErrorBoundary>} />
-            <Route path='/all-students' element={<ErrorBoundary><TotalStudent/></ErrorBoundary>} />
             <Route path='/courseProgress/:courseId' element={<ErrorBoundary><CourseProgress /></ErrorBoundary>} />
             <Route path='/gradeStudent/:studentId' element={<ErrorBoundary><UserDetailsComponent /></ErrorBoundary>} />
           </Route>

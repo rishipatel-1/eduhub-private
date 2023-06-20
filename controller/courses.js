@@ -507,11 +507,11 @@ const getAllCourse2 = async (req, res) => {
           as: "enrolled_courses",
         },
       },
-      {
-        $match: {
-          enrolled_courses: { $ne: [] },
-        },
-      },
+      // {
+      //   $match: {
+      //     enrolled_courses: { $ne: [] },
+      //   },
+      // },
       {
         $project: {
           _id: 1,
