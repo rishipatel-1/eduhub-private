@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import React, { useEffect, useState } from 'react'
 import CourseDetails from './Courses'
 import './StudentCourse.css'

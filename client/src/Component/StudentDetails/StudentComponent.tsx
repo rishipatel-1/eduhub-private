@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
-/* eslint-disable @typescript-eslint/prefer-optional-chain */
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Modal, Button } from 'react-bootstrap'
@@ -35,22 +31,18 @@ interface newStudent {
   id: number
   name: string
   stack: string
-  courseslist: string[]
+  courseslist: any[]
   email: string
   user_role: string
   username: string
   _id: string
-  courses: Course[]
+  courses: any[]
 }
-// export interface Course {
-//   _id?: string
-//   title: string
-//   description: string
-// }
-// interface CourseType {
-//   _id: string
-//   title: string
-// }
+interface ValidationErrors {
+  email: string
+  stack: string
+  courseslist: string
+}
 export interface Course {
   _id: string
   title: string
@@ -86,7 +78,12 @@ const UserComponent: React.FC = () => {
   const [data, setData] = useState([])
   const [showConfirmationModal, setShowConfirmationModal] = useState(false)
   const [selectedStudentToDelete, setSelectedStudentToDelete] = useState<Student | null>(null)
-  const itemsPerPage = 8
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({
+    email: '',
+    stack: '',
+    courseslist: ''
+  })
+  const itemsPerPage = 6
   const [currentPage, setCurrentPage] = useState(1)
 
   const handleNextPage = () => {
@@ -182,6 +179,11 @@ const UserComponent: React.FC = () => {
   const handleModalClose = () => {
     setShowDetails(false)
     setSelectedStudent(false)
+    setValidationErrors({
+      email: '',
+      stack: '',
+      courseslist: ''
+  })
   }
 
   const handleEditModalOpen = (student: Student) => {
@@ -198,7 +200,16 @@ const UserComponent: React.FC = () => {
   }
 
   const handleSaveStudent = async () => {
-    setLoading(true) // Set loading state to true
+    // Check if email or stack is empty
+    if (!newStudent.email || !newStudent.stack || !newStudent.courseslist.length) {
+      setValidationErrors({
+        email: !newStudent.email ? 'Email is required.' : '',
+        stack: !newStudent.stack ? 'Stack is required.' : '',
+        courseslist: !newStudent.courseslist.length ? 'At least one course must be selected.' : ''
+      })
+      return
+    }
+    setLoading(true)
     try {
       const resp = await enrollmultiplecourses({
         studentEmail: newStudent.email,
@@ -364,7 +375,7 @@ const UserComponent: React.FC = () => {
             <div className="col-auto p-0">
               <h3 className="mt-3">Student Details</h3>
             </div>
-            <div className="row d-flex justify-content-between align-items-center">
+            <div className="row d-flex justify-content-between align-items-center flex-row">
 
               <div className="col-auto p-0">
                 <button
@@ -387,7 +398,7 @@ const UserComponent: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="table-container">
+          <div className="table-container mt-2">
             <table ref={tableRef}>
               <thead>
                 <tr>
@@ -408,8 +419,8 @@ const UserComponent: React.FC = () => {
                   <tr key={`${student._id}`}>
                     <td>{student.username}</td>
                     <td>{student.email}</td>
-                    <td>{student.stack === null ? 'No Stack' : student.stack}</td>
-                    <td>{student.coursesnames}</td>
+                    <td className='stacktable-td'>{student.stack === null ? 'No Stack' : student.stack}</td>
+                    <td className='coursetable-td'>{student.coursesnames}</td>
                     <td className='actions-student'>
                       <div className="icon-container">
                         <BsPencil
@@ -530,29 +541,35 @@ const UserComponent: React.FC = () => {
               <div className="card">
                 <div className="card-header">Add Student</div>
                 <div className="card-body">
-                  <div>
-                    <label htmlFor="email">Email:</label>
-                    <input
-                      className='w-100'
-                      type="text"
-                      id="email"
-                      name="email"
-                      value={newStudent.email}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="stack">Stack:</label>
-                    <input
-                      className='w-100'
-                      type="text"
-                      id="stack"
-                      name="stack"
-                      value={newStudent.stack}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div>
+                <div>
+  <label htmlFor="email">Email:</label>
+  <input
+    className="w-100"
+    type="text"
+    id="email"
+    name="email"
+    value={newStudent.email}
+    onChange={handleInputChange}
+  />
+  {(!newStudent.email && validationErrors.email) && (
+    <p className="text-danger position-absolute error-class">{validationErrors.email}</p>
+  )}
+</div>
+<div className='mt-4'>
+  <label htmlFor="stack">Stack:</label>
+  <input
+    className="w-100"
+    type="text"
+    id="stack"
+    name="stack"
+    value={newStudent.stack}
+    onChange={handleInputChange}
+  />
+  {(!newStudent.stack && validationErrors.stack) && (
+    <p className="text-danger position-absolute error-class">{validationErrors.stack}</p>
+  )}
+</div>
+                  <div className='mt-4'>
                     <label htmlFor="select-course">Courses:</label>
                     <Select
                       closeMenuOnSelect={false}
@@ -571,6 +588,9 @@ const UserComponent: React.FC = () => {
                       }))}
                       onChange={handleCourseChange}
                     />
+                      {(!newStudent.courseslist.length && validationErrors.courseslist) && (
+    <p className="text-danger position-absolute error-class">{validationErrors.courseslist}</p>
+  )}
                   </div>
                   <div className='float-end'>
                     <Button variant="secondary" onClick={handleModalClose} className="m-2 mt-5">

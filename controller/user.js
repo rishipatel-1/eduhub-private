@@ -81,9 +81,9 @@ const signup = async (req, res) => {
     !(role === "student" || role === "admin")
   ) {
     res.status(400).json({
-      message: "Need to Enter Proper Data",
+      message: "Enter Proper Data",
     });
-    return;
+    return
   }
 
   const findUser = await User.findOne({ email });
@@ -96,12 +96,19 @@ const signup = async (req, res) => {
 
   const verificationToken = await crypto.randomBytes(32).toString("hex");
   const passHash = await getPasswordHash(password);
-  const verificationLink = `${process.env.base_url}/verify-email/${verificationToken}`;
+  const verificationLink = `${process.env.base_url}:${process.env.PORT}/verify-email/${verificationToken}`;
 
   const htmlmsg = `<p>Dear User,
   </p>
   <p>Please verify your email address by clicking on the following link: <a href="${verificationLink}">Click Here</a></p>`;
   console.log("Verification LInk:", verificationLink);
+
+  // send email here
+  // const sendEmail =
+  // if (sendEmail !== 200) {
+  //res.status(500).json({ error: "Error while Sending Email" });
+  //return;
+  //}
 
   const sendEmail = await SendMail(email, "Verify your Email Address", htmlmsg);
   console.log("Send Email:", sendEmail);

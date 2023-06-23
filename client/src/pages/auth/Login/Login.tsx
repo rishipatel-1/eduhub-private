@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import './Login.css'
@@ -13,34 +12,98 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassowrd] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [emailError, setEmailError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
   const [code, setCode] = useState('')
   const navigator = useNavigate()
 
-  const handleSubmit = (event: any) => {
+  const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value)
+    validateEmail(event.target.value)
+  }
+
+  const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value)
+    validatePassword(event.target.value)
+  }
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^\S+@\S+\.\S+$/
+    if (!emailRegex.test(email)) {
+      setEmailError('Enter a valid email address')
+    } else {
+      setEmailError('')
+    }
+  }
+
+  const validatePassword = (password: string) => {
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{}':"\\|,.<>/?]).{8,}$/
+    if (!passwordRegex.test(password)) {
+      setPasswordError(
+        'Password must conatin a capital letter and atleast be 8 character long'
+      )
+    } else {
+      setPasswordError('')
+    }
+  }
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    login({ email, password, code }).then(async (resp: any) => {
-      if (resp === null || resp === undefined) {
-        toast.error('Invalid UserName or Password')
-        return
-      }
+    if (!isEmailValid(email) || !isPasswordValid(password)) {
+      return
+    }
 
-      if (resp.status !== 200) {
-        console.log('Error Whle Logging in: ', resp)
-      }
+    login({ email, password, code })
+      .then(async (resp: any) => {
+        if (resp === null || resp === undefined) {
+          toast.error('Invalid UserName or Password')
+          return
+        }
 
-      setCookie('token', resp.data.token, { path: '/' })
+        if (resp.status !== 200) {
+          console.log('Error Whle Logging in: ', resp)
+        }
 
-      const user: any = await jwt(resp.data.token)
+        setCookie('token', resp.data.token, { path: '/' })
 
-      if (user.role === 'admin') {
-        navigator('/Admindashboard')
-      } else if (user.role === 'student') {
-        navigator('/Studentdashboard')
-      }
-    }).catch(err => {
-      console.log('Error While Logging in: ', err)
-    })
+        const user: any = await jwt(resp.data.token)
+
+        if (user.role === 'admin') {
+          navigator('/Admindashboard')
+        } else if (user.role === 'student') {
+          navigator('/Studentdashboard')
+        }
+      })
+      .catch((err) => {
+        console.log('Error While Logging in: ', err)
+      })
+  }
+
+  const isEmailValid = (email: string): boolean => {
+    // Email validation logic
+    const emailRegex = /^\S+@\S+\.\S+$/
+    if (!emailRegex.test(email)) {
+      setEmailError('Enter a valid email address')
+      return false
+    }
+
+    setEmailError('')
+    return true
+  }
+
+  const isPasswordValid = (password: string): boolean => {
+    // Password validation logic
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{}':"\\|,.<>/?]).{8,}$/
+    if (!passwordRegex.test(password)) {
+      setPasswordError(
+        'Password should be at least 8 characters long, contain at least one capital letter, and one special symbol'
+      )
+      return false
+    }
+
+    setPasswordError('')
+    return true
   }
 
   useEffect(() => {
@@ -80,47 +143,49 @@ const Login: React.FC = () => {
               <div className="title">Login</div>
               <form onSubmit={handleSubmit}>
                 <div className="input-boxes">
-                  <div className="input-box">
-                    <i className="fas fa-envelope" />
-                    <input
-                      type="text"
-                      placeholder="Enter your email"
-                      required
-                      value={email}
-                      onChange={(e) => { setEmail(e.target.value) }}
-                    />
-                  </div>
-                  <div className="input-box">
-                    <i className="fas fa-lock" />
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(e) => { setPassword(e.target.value) }}
-                      />
-                  </div>
-                  {/* <div className="input-box">
-                    <i className="fas fa-lock" />
-                    <input
-                      placeholder="Enter your code"
-                      value={code}
-                      onChange={(e) => { setCode(e.target.value) }}
-                    />
-                  </div> */}
-                  <div className="text">
+                <div className='d-flex flex-column  position-relative'>
+            <div className='input-box mb-3'>
+<i className='fas fa-envelope' />
+              <input
+                type='text'
+                placeholder='Enter your email'
+                value={email}
+                onChange={handleEmailChange}
+                required
+              />
+</div>
+              <div className='position-absolute errorDivemail'>
+                {emailError && (
+                  <span className='input-error'>{emailError}</span>
+                )}
+              </div>
+            </div>
+            <div className='d-flex flex-column  position-relative'>
+              <div className='input-box mb-5'>
+                <i className='fas fa-lock' />
+                <input
+                  type='password'
+                  placeholder='Enter your password'
+                  value={password}
+                  onChange={handlePasswordChange}
+                  required
+                />
+              </div>
+              <div className='position-absolute errorDiv'>
+                {passwordError && (
+                  <span className='input-error'>{passwordError}</span>
+                )}
+              </div>
+            </div>
+                  {/* <div className="text">
                     <Link to="/forgot-password">Forgot password?</Link>
-                  </div>
+                  </div> */}
                   <div className="button input-box">
-                    <input
-                      type="submit"
-                      value="Submit"
-                      onClick={handleSubmit}
-                    />
+                    <input type="submit" value="Submit" />
                   </div>
                   <div className="text sign-up-text">
-                  Don&apos;t have an account&#x3f;{' '}
+                    Don&apos;t have an account&#x3f;{' '}
                     <label htmlFor="flip">Register now</label>
-
                   </div>
                 </div>
               </form>

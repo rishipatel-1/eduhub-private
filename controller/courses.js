@@ -365,9 +365,12 @@ const deleteStudentsEnrollments = async (req, res) => {
     //   { new: true }
     // );
 
-    const student = await User.findOne({
-      _id: studentId,
-    });
+    const student = await User.findByIdAndDelete(studentId);
+
+    if (!student) {
+      console.log("Error While Deleting Students");
+      res.status(500).json({ message: "Error While Deleting Student" });
+    }
 
     // console.log("student: ", student);
 
@@ -390,6 +393,8 @@ const deleteStudentsEnrollments = async (req, res) => {
       return;
     }
 
+    const submission = await Submissions.deleteMany({ student: studentId });
+
     res.status(200).json({ message: "Student Enrollment Deleted Successfull" });
   } catch (err) {
     console.log(
@@ -402,6 +407,69 @@ const deleteStudentsEnrollments = async (req, res) => {
     });
   }
 };
+
+// const deleteStudentsEnrollments = async (req, res) => {
+//   try {
+//     const { studentId, courseList } = req.body;
+
+//     console.log("Student Enrollment: ", req.body);
+//     const val_result = await validateToken(req.headers.authorization);
+
+//     if (!val_result.valid || val_result.role !== "admin") {
+//       res.status(401).json({
+//         message: "Access Denied ",
+//       });
+//       return;
+//     }
+
+//     // const student = await User.findOneAndUpdate(
+//     //   { email: studentEmail },
+//     //   {
+//     //     $set: {
+//     //       stack: stack,
+//     //     },
+//     //     $addToSet: { courses: { $each: courseList } },
+//     //   },
+//     //   { new: true }
+//     // );
+
+//     const student = await User.findOne({
+//       _id: studentId,
+//     });
+
+//     // console.log("student: ", student);
+
+//     // const uCourse = await Courses.findByIdAndUpdate(
+//     //   req.params.courseId,
+//     //   { $addToSet: { enrolled_students: student._id } },
+//     //   { new: true }
+//     // );
+
+//     const denrollStudent = await Courses.updateMany(
+//       {},
+//       { $pull: { enrolled_students: studentId } }
+//     );
+
+//     if (!denrollStudent) {
+//       console.log("Error While Deleting student Enrollments: ");
+//       res
+//         .status(500)
+//         .json({ message: "Error While Deleting Student Enrollments" });
+//       return;
+//     }
+
+//     res.status(200).json({ message: "Student Enrollment Deleted Successfull" });
+//   } catch (err) {
+//     console.log(
+//       "Error While deleting Enrollment for  Student for Course:\n",
+//       err
+//     );
+//     res.status(500).json({
+//       message: "Error While deleting Students Enrollment for Course",
+//       error: err,
+//     });
+//   }
+// };
 
 const removeEnrollment = async (req, res) => {
   try {

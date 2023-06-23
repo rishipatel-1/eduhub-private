@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
-/* eslint-disable @typescript-eslint/no-floating-promises */
-/* eslint-disable @typescript-eslint/no-confusing-void-expression */
 import React, { useState, useRef, useEffect, type ChangeEvent } from 'react'
 import './Coursedetails.css'
-import { Card, Button } from 'react-bootstrap'
+import { Card, Button, Modal } from 'react-bootstrap'
 import { BsPencil, BsTrash } from 'react-icons/bs'
-import { useSelector } from 'react-redux'
+
 import { useNavigate, useParams } from 'react-router-dom'
 import { AxiosResponse } from 'axios'
 import {
@@ -46,19 +43,30 @@ const Coursedetails: React.FC = () => {
   const [imageFile, setImageFile] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [editIndex, setEditIndex] = useState<number | null>(null)
+  const [showConfirmationModal, setShowConfirmationModal] =
+    useState<boolean>(false)
+  const [selectedChapterIndex, setSelectedChapterIndex] = useState<
+    number | null
+  >(null)
+  const [selectedChapterId, setSelectedChapterId] = useState<string | null>(
+    null
+  )
   const { courseId } = useParams()
   const [course, setCourse] = useState<any>({})
   const navigator = useNavigate()
   const [selectedCourse, setSelectedCourse] = useState(false)
   const [base64String, setBase64String] = useState<string | null>(null)
-  const [formErrors, setFormErrors] = useState({ subCategoryTitle: '', subCategoryDescription: '' })
+  const [formErrors, setFormErrors] = useState({
+    subCategoryTitle: '',
+    subCategoryDescription: ''
+  })
 
   const initialSubCategoryTitle = ''
   const initialSubCategoryDescription = ''
   const initialSubCategoryPractical = ''
   const fetchCourse = async () => {
     try {
-      const resp = await getCourseById(courseId) as AxiosResponse<any, any>
+      const resp = (await getCourseById(courseId)) as AxiosResponse<any, any>
       if (resp.status !== 200) {
         console.log('Error While Fetching Course: ', resp)
         return
@@ -81,7 +89,10 @@ const Coursedetails: React.FC = () => {
   const fetchChapterForCourses = async (courseId: string) => {
     try {
       setLoading(true)
-      const resp = await getChapterForCourse(courseId) as AxiosResponse<any, any>
+      const resp = (await getChapterForCourse(courseId)) as AxiosResponse<
+        any,
+        any
+      >
       if (resp.status !== 200) {
         console.log('Error While Fetching Course: ', resp)
         return
@@ -110,7 +121,9 @@ const Coursedetails: React.FC = () => {
     const file = event.target.files?.[0]
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        setErrorMessage('Image size exceeds 5 MB. Please choose a smaller image.')
+        setErrorMessage(
+          'Image size exceeds 5 MB. Please choose a smaller image.'
+        )
         return
       }
       const reader = new FileReader()
@@ -207,9 +220,13 @@ const Coursedetails: React.FC = () => {
     setEditIndex(index)
     setShowDetails(true)
   }
-
-  const handleDelete = (index: number, chapterId: string) => {
-    deleteChapter(chapterId)
+  const showDeleteConfirmation = (index: number, chapterId: string) => {
+    setSelectedChapterIndex(index)
+    setSelectedChapterId(chapterId)
+    setShowConfirmationModal(true)
+  }
+  const confirmDeleteChapter = () => {
+    deleteChapter(selectedChapterId as string)
       .then(async (resp: DeleteResponse | void | AxiosResponse<any, any>) => {
         if (resp && 'status' in resp && resp.status !== 200) {
           console.log('Error While deleting Chapter:', resp)
@@ -225,54 +242,83 @@ const Coursedetails: React.FC = () => {
       .catch((err) => {
         console.log('Error While deleting Chapter: ', err)
       })
+
     setEditIndex(null)
     fetchChapterForCourses(course._id).catch((err) => {
       console.log('Error While Fetching Chapters: ', err)
     })
+
+    // Close the confirmation modal
+    setShowConfirmationModal(false)
   }
+
   return (
     <>
       {loading && (
-        <div className="loader-container">
-          <div className="text-center">
+        <div className='loader-container'>
+          <div className='text-center'>
             <LoadingSpinner />
           </div>
         </div>
       )}
       <div className={`content ${loading ? 'blur' : ''}`}>
-        <div className="container CourseContainer">
+        <Modal
+          show={showConfirmationModal}
+          onHide={() => setShowConfirmationModal(false)}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Confirm Deletion</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Are you sure you want to delete this chapter?</Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant='secondary'
+              onClick={() => setShowConfirmationModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant='danger' onClick={confirmDeleteChapter}>
+              Delete
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <div className='container CourseContainer'>
           <button
-            className="back-btn"
+            className='back-btn'
             onClick={() => {
               navigator('/Admindashboard')
             }}
           >
             &larr; &nbsp; Back
           </button>
-          <div className="courses-details">
-            <h2 className="fs-1 fw-bold">{course.title}</h2>
-            <p className="py-2">{course.description}</p>
-            <div className="d-flex align-items-center justify-content-between">
-              <h5 className="mt-4">List Of Chapters</h5>
-              <button className="btn btn-primary mt-4" onClick={toggleSidebar}>
+          <div className='courses-details'>
+            <h2 className='fs-1 fw-bold'>{course.title}</h2>
+            <p className='py-2'>{course.description}</p>
+            <div className='d-flex align-items-center justify-content-between flex-column flex-sm-row'>
+              <h5 className='mt-3'>List Of Chapters</h5>
+              <button className='btn btn-primary mt-4' onClick={toggleSidebar}>
                 {showDetails ? 'Add Chapter' : 'Add Chapter'}
               </button>
             </div>
-            <div className="row d-flex flex-column w-100">
-              <div className="subcategories">
+            <div className='row d-flex flex-column w-100 m-0 p-0'>
+              <div className='subcategories'>
                 {subCategories.length === 0 ? (
-                  <div className='w-100 text-center m-4'><h4>No chapters added yet</h4></div>
+                  <div className='w-100 text-center m-4'>
+                    <h4>No chapters added yet</h4>
+                  </div>
                 ) : (
-                  <div className="row row-cols-1 row-cols-md-3 g-4">
+                  <div className='row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4'>
                     {subCategories.map((subCategory, index) => (
-                      <div className="col mb-4" key={index}>
-                        <Card className="h-100">
-                          <Card.Body className="p-4 w-auto">
-                            <div className="d-flex flex-column justify-content-sm-between">
-                              <Card.Title className="title">{subCategory.title}</Card.Title>
-                              <div className="card-header-icons ms-auto ms-sm-0">
+                      <div className='col mb-4' key={index}>
+                        <Card className='h-100'>
+                          <Card.Body className='p-4 w-auto'>
+                            <div className='d-flex flex-column justify-content-sm-between'>
+                              <Card.Title className='title'>
+                                {subCategory.title}
+                              </Card.Title>
+                              <div className='card-header-icons ms-auto ms-sm-0'>
                                 <Button
-                                  variant="link"
+                                  variant='link'
                                   onClick={() => {
                                     handleEdit(index, subCategory._id)
                                   }}
@@ -280,22 +326,29 @@ const Coursedetails: React.FC = () => {
                                   <BsPencil />
                                 </Button>
                                 <Button
-                                  variant="link"
-                                  onClick={() => {
-                                    handleDelete(index, subCategory._id)
-                                  }}
+                                  variant='link'
+                                  onClick={() =>
+                                    showDeleteConfirmation(
+                                      index,
+                                      subCategory._id
+                                    )
+                                  }
                                 >
                                   <BsTrash />
                                 </Button>
                               </div>
                             </div>
-                            <Card.Text className="mt-3 mb-3">{subCategory.description}</Card.Text>
-                            <Card.Text>Practical: {subCategory.practical}</Card.Text>
+                            <Card.Text className='mt-3 mb-3'>
+                              {subCategory.description}
+                            </Card.Text>
+                            <Card.Text>
+                              Practical: {subCategory.practical}
+                            </Card.Text>
                             {subCategory.image != null && (
                               <img
                                 src={subCategory.image}
-                                alt="Subcategory Image"
-                                className="img-fluid mt-3 h-50"
+                                alt='Subcategory Image'
+                                className='img-fluid mt-3 h-50'
                               />
                             )}
                           </Card.Body>
@@ -305,21 +358,26 @@ const Coursedetails: React.FC = () => {
                   </div>
                 )}
               </div>
-
             </div>
           </div>
         </div>
-        <div className={`sidebar-course ${showDetails ? 'sidebar-open' : ''} ${loading ? 'd-none' : ''}`}>
-          <div className="card m-4">
-            <div className="title-card">
-              <h5 className="m-3">{selectedCourse ? 'Update Chapter' : 'Add Chapter'}</h5>
+        <div
+          className={`sidebar-course ${showDetails ? 'sidebar-open' : ''} ${
+            loading ? 'd-none' : ''
+          }`}
+        >
+          <div className='card m-4'>
+            <div className='title-card'>
+              <h5 className='m-3'>
+                {selectedCourse ? 'Update Chapter' : 'Add Chapter'}
+              </h5>
             </div>
-            <form onSubmit={addSubCategory} ref={formRef} className="m-4">
-              <div className="form-group">
+            <form onSubmit={addSubCategory} ref={formRef} className='m-4'>
+              <div className='form-group'>
                 <label>Chapter Title</label>
                 <input
-                  type="text"
-                  className="form-control"
+                  type='text'
+                  className='form-control'
                   value={subCategoryTitle}
                   onChange={(e) => {
                     setSubCategoryTitle(e.target.value)
@@ -327,10 +385,10 @@ const Coursedetails: React.FC = () => {
                   required
                 />
               </div>
-              <div className="form-group">
+              <div className='form-group'>
                 <label>Chapter Description</label>
                 <textarea
-                  className="form-control"
+                  className='form-control'
                   value={subCategoryDescription}
                   required
                   onChange={(e) => {
@@ -338,37 +396,37 @@ const Coursedetails: React.FC = () => {
                   }}
                 ></textarea>
               </div>
-              <div className="form-group">
+              <div className='form-group'>
                 <label>Practical</label>
                 <input
-                  type="text"
-                  className="form-control"
+                  type='text'
+                  className='form-control'
                   value={subCategoryPractical}
                   onChange={(e) => {
                     setSubCategoryPractical(e.target.value)
                   }}
                 />
               </div>
-                <div className="form-group">
-                  <label>Image</label>
-                  <input
-                    type="file"
-                    className="form-control image-input"
-                    ref={fileInputRef}
-                    onChange={handleImageUpload}
-                  />
+              <div className='form-group'>
+                <label>Image</label>
+                <input
+                  type='file'
+                  className='form-control image-input'
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                />
+              </div>
+              {errorMessage && (
+                <div className='error-message' style={{ color: 'red' }}>
+                  {errorMessage}
                 </div>
-                {errorMessage && (
-                  <div className="error-message" style={{ color: 'red' }}>
-                    {errorMessage}
-                  </div>
-                )}
-              <button type="submit" className="btn btn-primary mt-3">
+              )}
+              <button type='submit' className='btn btn-primary mt-3'>
                 {selectedCourse ? 'Update Chapter' : 'Add Chapter'}
               </button>
             </form>
-            <button className="ms-4 w-25" onClick={handleModal}>
-              back
+            <button className='ms-4 back-course' onClick={handleModal}>
+            &larr; &nbsp; back
             </button>
           </div>
         </div>

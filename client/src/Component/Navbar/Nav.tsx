@@ -42,7 +42,7 @@ const Navbar = ({ isAdmin, children }: NavbarProps) => {
         {isMobile && (
           <div>
           <i
-            className={`nav__toggle fa ${isMenuOpen ? 'fa-times' : 'fa-bars'
+            className={`nav__toggle fa ${isMenuOpen ? 'fa-bars' : 'fa-bars'
               } m-2`}
             aria-hidden="true"
             onClick={toggleMenu}

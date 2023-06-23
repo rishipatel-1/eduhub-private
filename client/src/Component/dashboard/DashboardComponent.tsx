@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-floating-promises */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React, { useEffect, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts'
 import './DashboardComponent.css'
@@ -59,10 +56,10 @@ const DashboardComponent: React.FC = () => {
     validate: (values: { title: string, description: string }) => {
       const errors: { title?: string, description?: string } = {}
       if (values.title === '') {
-        errors.title = 'Title* is required'
+        errors.title = 'Title is required'
       }
       if (values.description === '') {
-        errors.description = 'Description* is required'
+        errors.description = 'Description is required'
       }
       return errors
     },
@@ -171,8 +168,8 @@ const DashboardComponent: React.FC = () => {
         <div className="container DashboardContainer">
           <h3>Dashboard</h3>
           <ErrorBoundary>
-            <div className="row mt-4">
-              <div className="col-md-6 chart">
+            <div className="row mt-4 chart">
+              <div className="col-md-6">
                 <BarChart width={250} height={300} data={studentData}>
                   <Bar dataKey="data" fill="rgba(54, 162, 235, 0.6)" />
                   <XAxis dataKey="label" />
@@ -191,7 +188,7 @@ const DashboardComponent: React.FC = () => {
             </div>
           </ErrorBoundary>
           <ErrorBoundary>
-            <div className="d-flex justify-content-between align-items-center">
+            <div className="d-flex justify-content-between align-items-center flex-column flex-sm-row">
               <div className="text-center mt-4">
                 <h2 className="fw-bold">Courses</h2>
                 <hr />
@@ -212,7 +209,6 @@ const DashboardComponent: React.FC = () => {
                 >
                   {showDetails ? 'Add Course' : 'Add Course'}
                 </button>
-                <hr />
               </div>
             </div>
           </ErrorBoundary>
@@ -267,7 +263,7 @@ const DashboardComponent: React.FC = () => {
                   <div className="card-body">
                     <form onSubmit={formik.handleSubmit}>
                       <div className="form-group">
-                        <label>Title</label>
+                        <label>Title *</label>
                         <input
                           type="text"
                           className="form-control"
@@ -282,7 +278,7 @@ const DashboardComponent: React.FC = () => {
                         )}
                       </div>
                       <div className="form-group">
-                        <label>Description</label>
+                        <label>Description *</label>
                         <textarea
                           className="form-control"
                           name="description"
@@ -309,9 +305,11 @@ const DashboardComponent: React.FC = () => {
                 </div>
               </div>
             </div>
-            <button className="ms-5" onClick={handleModal}>
+           <div className='text-center'>
+           <button className="back-button" onClick={handleModal}>
               Back
             </button>
+           </div>
           </div>
         </ErrorBoundary>
       </div>

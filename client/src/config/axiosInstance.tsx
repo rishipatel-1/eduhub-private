@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-optional-chain */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { getCookie } from 'react-use-cookie'

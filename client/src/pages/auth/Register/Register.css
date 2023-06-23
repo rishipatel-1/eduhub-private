@@ -1,0 +1,14 @@
+.input-error{
+    color: red;
+    font-size: 13px;
+}
+.inputRegister{
+    display: flex;
+    flex-direction: column;
+}
+.errorDiv{
+top: 60%;
+}
+.errorDivemail{
+top: 80%;
+}

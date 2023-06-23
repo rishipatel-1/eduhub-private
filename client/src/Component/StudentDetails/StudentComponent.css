@@ -11,6 +11,9 @@ h3 {
   cursor: pointer;
 
 }
+.error-class{
+  font-size: 13px;
+}
 .loader-container {
   position: fixed;
   top: 0;
@@ -149,10 +152,10 @@ button {
   border-radius: 4px;
   cursor: pointer;
 }
-
+/* 
 button:hover {
   background-color: #45a049;
-}
+} */
 .modal-dialog {
   max-width: 400px;
 }
@@ -172,13 +175,13 @@ button:hover {
 }
 @media(max-width:400px) {
   .sidebar{
-    width: 20rem;
+    width: 22rem;
   }
   
 }
 @media(max-width:350px) {
   .sidebar{
-    width: 15rem;
+    width: 19rem;
   }
   
 }
@@ -194,6 +197,9 @@ button:hover {
 .modal-footer {
   border-top: none;
   justify-content: flex-end;
+}
+.coursetable-td{
+  min-width: 200px;
 }
 
 /* Additional styles for the form inside the modal */
@@ -221,10 +227,13 @@ button:hover {
 }
 .table-container {
   overflow: auto;
-  margin-bottom: 25px;
+  margin-bottom: 45px;
 }
 .tableDiv {
   overflow-x: auto;
+}
+.stacktable-td{
+  min-width: 120px;
 }
 .courseTable {
   min-width: 170px !important;
@@ -256,21 +265,28 @@ button:hover {
 }
 @media(max-width: 550px) {
   .input-search{
-    width: 290px;
+    width: 340px;
     margin-bottom: 2px;
   }
   
 }
 @media(max-width: 490px) {
   .input-search{
-    width: 220px;
+    width: 280px;
     margin-bottom: 15px;
   }
   
 }
-@media(max-width: 300px) {
+@media(max-width: 350px) {
   .input-search{
-    width: 180px;
+    width: 250px;
+    margin-bottom: 15px;
+  }
+  
+}
+@media(max-width: 310px) {
+  .input-search{
+    width: 100%;
     margin-bottom: 15px;
   }
   

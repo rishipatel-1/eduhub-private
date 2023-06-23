@@ -28,7 +28,7 @@
     "@typescript-eslint/no-confusing-void-expression":"off",
     "@typescript-eslint/no-misused-promises":"off",
     "@typescript-eslint/prefer-optional-chain":"off",
-    " @typescript-eslint/no-floating-promises":"off",
+    "@typescript-eslint/no-floating-promises":"off",
     "@typescript-eslint/no-invalid-void-type": "off",
     "@typescript-eslint/no-unnecessary-boolean-literal-compare":"off"
 

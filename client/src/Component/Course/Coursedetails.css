@@ -94,9 +94,25 @@ background-color: #a5d5fd;
   border-radius: 4px;
   cursor: pointer;
 }
+.back-course{
+  max-width: 100px;
+  font-size: small;
+}
 @media(max-width:500px) {
   .sidebar-course{
+    width: 26rem;
+  }
+  
+}
+@media(max-width:420px) {
+  .sidebar-course{
     width: 20rem;
+  }
+  
+}
+@media(max-width:350px) {
+  .sidebar-course{
+    width: 19rem;
   }
   
 }

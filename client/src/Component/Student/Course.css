@@ -10,40 +10,44 @@
   padding: 20px;
   background-color: #ffffff;
   border-radius: 8px;
-  width: 80%;
+  width: 90%;
   box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.1), 2px 2px 2px 4px rgba(0, 0, 0, 0.06);
 }
-
-.course-title {
+.submit-div-student{
+  position: absolute;
+  bottom: 30px;
+  width: 80%;
+}
+.course-title-student {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
-.course-description {
+.course-description-student {
   margin-bottom: 20px;
 }
-.chapter-container {
+.chapter-container-student {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
 }
 
-.chapter-card {
+.chapter-card-student {
   background-color: #ffffff;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.1), 2px 2px 2px 2px rgba(0, 0, 0, 0.06);
 }
 
-.chapter-title {
+.chapter-title-student {
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
-.chapter-practical {
-  margin-bottom: 15px;
+.chapter-practical-student {
+  margin-bottom: 10rem;
 }
 
 .dropzone {
@@ -53,13 +57,19 @@
   text-align: center;
   cursor: pointer;
   border-radius: 4px;
+  position: relative;
   transition: background-color 0.3s ease;
 }
-.chapter-description{
+.chapter-description-student{
   font-weight: 400;
+  margin-bottom: 3rem;
 }
+
 .dropzone p {
   margin: 0;
+}
+.card-body-student{
+  min-height: 50vh;
 }
 
 .dropzone:hover {
@@ -110,7 +120,7 @@
   margin-bottom: 5px;
 }
 
-.grade-value {
+.grade-value-student {
   font-size: 14px;
   margin: 0;
 }
@@ -129,4 +139,11 @@
 
 .show-grades-button:hover {
   background-color: #1e87db;
+}
+@media (max-width:768px){
+  .chapter-container-student {
+    display: grid;
+    grid-template-columns: auto;
+    gap: 20px;
+  }
 }

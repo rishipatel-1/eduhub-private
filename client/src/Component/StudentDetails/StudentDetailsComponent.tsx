@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-optional-chain */
 import React, { useEffect, useState } from 'react'
 import { Table, Form, Button } from 'react-bootstrap'
 import './StudentDetails.css'
