@@ -56,6 +56,7 @@ const Coursedetails: React.FC = () => {
   const navigator = useNavigate()
   const [selectedCourse, setSelectedCourse] = useState(false)
   const [base64String, setBase64String] = useState<string | null>(null)
+  const [value, setValue] = useState<boolean>(false)
   const [formErrors, setFormErrors] = useState({
     subCategoryTitle: '',
     subCategoryDescription: ''
@@ -93,6 +94,7 @@ const Coursedetails: React.FC = () => {
         any,
         any
       >
+      setValue(true)
       if (resp.status !== 200) {
         console.log('Error While Fetching Course: ', resp)
         return
@@ -302,7 +304,7 @@ const Coursedetails: React.FC = () => {
             </div>
             <div className='row d-flex flex-column w-100 m-0 p-0'>
               <div className='subcategories'>
-                {subCategories.length === 0 ? (
+                {subCategories.length === 0 && value ? (
                   <div className='w-100 text-center m-4'>
                     <h4>No chapters added yet</h4>
                   </div>
